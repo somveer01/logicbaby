@@ -140,3 +140,34 @@ const bufMaskable = createPng(512, 512, (x, y, w, h) => {
 });
 fs.writeFileSync(path.join(iconsDir, 'maskable-512.png'), bufMaskable);
 console.log('✅ Generated icons/maskable-512.png');
+
+// Screenshot 1 (Wide: 1280x720)
+const bufShot1 = createPng(1280, 720, (x, y, w, h) => {
+  const gradT = (x + y) / (w + h);
+  let r = Math.round(245 * (1 - gradT) + 237 * gradT);
+  let g = Math.round(243 * (1 - gradT) + 233 * gradT);
+  let b = Math.round(255 * (1 - gradT) + 254 * gradT);
+
+  // Center mock card
+  if (x > 200 && x < w - 200 && y > 120 && y < h - 120) {
+    r = 255; g = 255; b = 255;
+  }
+  return [r, g, b, 255];
+});
+fs.writeFileSync(path.join(iconsDir, 'screenshot-1.png'), bufShot1);
+console.log('✅ Generated icons/screenshot-1.png');
+
+// Screenshot 2 (Mobile portrait: 720x1280)
+const bufShot2 = createPng(720, 1280, (x, y, w, h) => {
+  const gradT = (x + y) / (w + h);
+  let r = Math.round(245 * (1 - gradT) + 237 * gradT);
+  let g = Math.round(243 * (1 - gradT) + 233 * gradT);
+  let b = Math.round(255 * (1 - gradT) + 254 * gradT);
+
+  if (x > 60 && x < w - 60 && y > 100 && y < h - 100) {
+    r = 255; g = 255; b = 255;
+  }
+  return [r, g, b, 255];
+});
+fs.writeFileSync(path.join(iconsDir, 'screenshot-2.png'), bufShot2);
+console.log('✅ Generated icons/screenshot-2.png');

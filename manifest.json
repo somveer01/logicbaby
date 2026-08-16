@@ -1,4 +1,5 @@
 {
+  "id": "logicbaby-kids-logic-puzzles",
   "name": "LogicBaby — Fun Logic Puzzles for Kids",
   "short_name": "LogicBaby",
   "description": "Visual logic puzzles and cognitive games for kids ages 3-9+",
@@ -8,6 +9,7 @@
   "background_color": "#F5F0FF",
   "theme_color": "#6C3FB5",
   "orientation": "portrait-primary",
+  "categories": ["education", "games", "kids"],
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -26,6 +28,38 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "LogicBaby Dashboard"
+    },
+    {
+      "src": "icons/screenshot-2.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "LogicBaby Game Arena"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Play Patterns",
+      "short_name": "Patterns",
+      "description": "Play pattern recognition logic puzzles",
+      "url": "./#game/patterns",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Play Math Logic",
+      "short_name": "Math",
+      "description": "Play fun math logic puzzles",
+      "url": "./#game/math",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

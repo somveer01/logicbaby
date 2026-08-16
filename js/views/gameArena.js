@@ -223,11 +223,6 @@ function renderQuestion() {
         <div class="game-progress-info">
           <span style="font-size: 1.3rem;">${meta.icon}</span>
           <strong>${meta.name}${isReviewMode ? '' : ` • Lvl ${levelNumber}`}</strong>
-          ${!isReviewMode ? `
-            <button class="btn-diff-badge ${diffMeta.className}" id="btn-toggle-difficulty" title="Change Difficulty (Click to cycle Easy / Medium / Hard)">
-              ${diffMeta.emoji} ${diffMeta.label} ▾
-            </button>
-          ` : ''}
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
           <span class="progress-count">${currentIndex + 1}/${questions.length}</span>
@@ -284,15 +279,6 @@ function renderQuestion() {
     } else {
       navigateTo('#/dashboard');
     }
-  });
-
-  // Difficulty badge button click (cycle 1 -> 2 -> 3)
-  document.getElementById('btn-toggle-difficulty')?.addEventListener('click', () => {
-    soundService.playPop();
-    const nextDiff = (currentDifficulty % 3) + 1;
-    AppState.selectedDifficulty = nextDiff;
-    updatePreferredDifficulty(nextDiff);
-    startGame(category, levelNumber, nextDiff);
   });
 
   // Speak button event

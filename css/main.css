@@ -111,6 +111,21 @@ img, svg {
 
 .hidden { display: none !important; }
 
+/* Main Container Layout */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  padding: 16px 20px 32px;
+}
+
 /* ==========================================================================
    TOPBAR
    ========================================================================== */
@@ -2349,7 +2364,7 @@ img, svg {
   color: #B91C1C;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .difficulty-control-card {
     flex-direction: column;
     align-items: flex-start;
@@ -2364,6 +2379,203 @@ img, svg {
     padding: 8px 10px;
     font-size: 0.85rem;
   }
+
+  /* --- Mobile Topbar --- */
+  .topbar {
+    padding: 6px 12px;
+    min-height: 48px;
+  }
+
+  .logo-text {
+    font-size: 1.15rem;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .stat-pill {
+    padding: 3px 8px;
+    font-size: 0.76rem;
+  }
+
+  .topbar-btn {
+    padding: 4px 8px;
+    font-size: 0.76rem;
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+
+  .main-content {
+    padding: 6px 8px;
+  }
+
+  /* --- Game Arena: Strict Single-Screen Mobile Fit (Zero Scroll) --- */
+  .game-arena {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - 60px);
+    max-height: calc(100dvh - 60px);
+    justify-content: flex-start;
+    gap: 6px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .game-header {
+    margin-bottom: 4px;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .btn-back {
+    padding: 4px 10px;
+    font-size: 0.78rem;
+  }
+
+  .game-progress-info {
+    gap: 6px;
+    font-size: 0.82rem;
+  }
+
+  .btn-diff-badge {
+    padding: 2px 7px;
+    font-size: 0.72rem;
+  }
+
+  .progress-bar-wrap {
+    width: 65px;
+    height: 7px;
+  }
+
+  .progress-count {
+    font-size: 0.78rem;
+  }
+
+  /* Question Card: Stretches perfectly inside mobile screen */
+  .question-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0; /* allows card to fit screen */
+    padding: 8px 10px;
+    border-radius: var(--r-md);
+    border-width: 2px;
+    box-shadow: var(--shadow-md);
+    margin: 0;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .question-prompt {
+    padding: 5px 8px;
+    margin-bottom: 6px;
+    gap: 8px;
+    border-radius: var(--r-sm);
+    flex-shrink: 0;
+  }
+
+  .btn-speak {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    font-size: 15px;
+  }
+
+  .question-text {
+    font-size: 0.92rem;
+    line-height: 1.25;
+  }
+
+  /* Question Visual: Resizes responsively to middle space */
+  .question-visual {
+    flex: 1;
+    min-height: 70px;
+    max-height: 130px;
+    padding: 4px;
+    margin-bottom: 6px;
+    border-radius: var(--r-md);
+    border-width: 2px;
+  }
+
+  .question-visual svg {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* 2x2 Option Tiles for fast thumb taps */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .option-tile {
+    min-height: unset;
+    height: 56px;
+    padding: 4px 6px;
+    border-radius: 12px;
+    border-width: 2px;
+    flex-direction: row;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .option-visual {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .option-visual svg {
+    width: 32px;
+    height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+  }
+
+  .option-label {
+    font-size: 0.82rem;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Hide floating mascot during puzzle to avoid blocking buttons */
+  .mascot-widget {
+    display: none !important;
+  }
+
+  /* Feedback banner on mobile */
+  .feedback-banner {
+    padding: 6px 8px;
+    margin-top: 4px;
+    font-size: 0.82rem;
+  }
+
+  .feedback-msg {
+    font-size: 0.88rem;
+    gap: 6px;
+  }
+
+  .btn-next {
+    padding: 6px 14px;
+    font-size: 0.84rem;
+  }
 }
+
 
 

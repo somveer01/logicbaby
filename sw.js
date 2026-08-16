@@ -24,7 +24,10 @@ const STATIC_ASSETS = [
   './js/views/gameArena.js',
   './js/views/celebration.js',
   './js/views/parentDashboard.js',
-  './js/views/ageSelector.js'
+  './js/views/ageSelector.js',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/maskable-512.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head><title>QuestionBank Test</title></head>
+<body>
+<h1>QuestionBank Test</h1>
+<pre id="output" style="white-space: pre-wrap; font-size: 14px;"></pre>
+<div id="svg-test" style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 20px;"></div>
+<script type="module">
+import {
+  getQuestions,
+  getQuestionsForLevel,
+  getQuestionById,
+  getAvailableCategories,
+  getTotalQuestionCount
+} from './js/data/questionBank.js';
+
+const out = document.getElementById('output');
+const svgBox = document.getElementById('svg-test');
+let pass = 0, fail = 0;
+
+function assert(label, condition) {
+  if (condition) {
+    out.textContent += `✅ PASS: ${label}\n`;
+    pass++;
+  } else {
+    out.textContent += `❌ FAIL: ${label}\n`;
+    fail++;
+  }
+}
+
+// 1. Total count
+const total = getTotalQuestionCount();
+assert(`Total questions: ${total} (expect >= 50)`, total >= 50);
+
+// 2. Check all 6 categories exist
+const cats = ['patterns', 'oddOneOut', 'spatial', 'math', 'sorting', 'memory'];
+const ageGroups = ['3-4', '5-6', '7-8', '9+'];
+
+for (const cat of cats) {
+  const qs = getQuestions(cat, '5-6');
+  assert(`Category "${cat}" has questions for age 5-6: ${qs.length}`, qs.length > 0);
+}
+
+// 3. Check all age groups have content
+for (const ag of ageGroups) {
+  const available = getAvailableCategories(ag);
+  assert(`Age group "${ag}" has categories: ${available.length}`, available.length > 0);
+}
+
+// 4. Question structure validation
+const sample = getQuestions('patterns', '3-4')[0];
+assert('Question has id', !!sample.id);
+assert('Question has questionText', !!sample.questionText);
+assert('Question has questionSVG', !!sample.questionSVG);
+assert('Question has 4 options', sample.options.length === 4);
+assert('Each option has svg', sample.options.every(o => !!o.svg));
+assert('Question has correctOptionId', !!sample.correctOptionId);
+assert('correctOptionId matches an option', sample.options.some(o => o.id === sample.correctOptionId));
+assert('Question has hint', !!sample.hint);
+
+// 5. getQuestionsForLevel returns shuffled set
+const level1 = getQuestionsForLevel('patterns', '5-6', 1, 5);
+assert(`getQuestionsForLevel returns 5 questions: ${level1.length}`, level1.length === 5);
+assert('Returned questions are for patterns category', level1.every(q => q.category === 'patterns'));
+assert('Every question has a matching correctOptionId', level1.every(q => q.options.some(o => o.id === q.correctOptionId)));
+
+// 6. Test Procedural Generation across categories
+import { generateProceduralQuestion } from './js/data/questionGenerator.js';
+for (const cat of ['math', 'patterns', 'oddOneOut', 'memory']) {
+  for (const ag of ['3-4', '5-6', '7-8', '9+']) {
+    const dynQ = generateProceduralQuestion(cat, ag, 2);
+    assert(`Procedural generated ${cat} (${ag}) is valid`, !!dynQ && !!dynQ.questionText && dynQ.options.length === 4 && dynQ.options.some(o => o.id === dynQ.correctOptionId));
+  }
+}
+
+// 7. Option shuffling test (options should be re-mapped to a, b, c, d properly)
+const samplePrepared = level1[0];
+assert('Prepared question option IDs are [a, b, c, d]', JSON.stringify(samplePrepared.options.map(o => o.id)) === JSON.stringify(['a', 'b', 'c', 'd']));
+
+// 8. getQuestionById works for static & cached procedural questions
+const byId = getQuestionById('pat-3-001');
+assert(`getQuestionById('pat-3-001') found: "${byId?.questionText?.substring(0, 30)}..."`, !!byId);
+
+const dynSample = level1.find(q => q.id.startsWith('gen-'));
+if (dynSample) {
+  const cachedLookup = getQuestionById(dynSample.id);
+  assert(`getQuestionById resolves runtime procedural question (${dynSample.id})`, !!cachedLookup);
+}
+
+// Summary
+out.textContent += `\n${'='.repeat(40)}\n`;
+out.textContent += `Results: ${pass} passed, ${fail} failed out of ${pass + fail} tests\n`;
+
+
+// 8. Render some sample SVGs to verify they display
+out.textContent += `\nRendering sample SVGs below...\n`;
+const samplesToShow = [
+  getQuestionById('pat-3-001'),
+  getQuestionById('odd-3-001'),
+  getQuestionById('spa-3-001'),
+  getQuestionById('math-3-001'),
+  getQuestionById('mem-3-001'),
+];
+
+for (const q of samplesToShow) {
+  if (!q) continue;
+  const div = document.createElement('div');
+  div.style.cssText = 'border: 2px solid #e2e8f0; border-radius: 12px; padding: 12px; background: white;';
+  div.innerHTML = `
+    <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px;">${q.id}: ${q.questionText}</div>
+    <div style="margin-bottom: 8px;">${q.questionSVG}</div>
+    <div style="display: flex; gap: 8px;">
+      ${q.options.map(o => `<div style="border: 2px solid ${o.id === q.correctOptionId ? '#22c55e' : '#e2e8f0'}; border-radius: 8px; padding: 4px; text-align:center;">
+        ${o.svg}<div style="font-size: 11px;">${o.label} ${o.id === q.correctOptionId ? '✅' : ''}</div>
+      </div>`).join('')}
+    </div>
+  `;
+  svgBox.appendChild(div);
+}
+</script>
+</body>
+</html>

@@ -14,6 +14,7 @@ const STATIC_ASSETS = [
   './js/state.js',
   './js/router.js',
   './js/data/questionBank.js',
+  './js/data/questionGenerator.js',
   './js/services/storageService.js',
   './js/services/soundService.js',
   './js/services/speechService.js',

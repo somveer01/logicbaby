@@ -117,19 +117,29 @@ function renderMobileBottomNav() {
     </div>
   `;
 
-  // Attach mobile nav events
-  document.getElementById('mob-nav-home')?.addEventListener('click', () => {
+  // Attach mobile nav events with instant navigation
+  const bindNavClick = (id, action) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      action();
+    });
+  };
+
+  bindNavClick('mob-nav-home', () => {
     soundService.playPop();
     navigateTo('#/dashboard');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  document.getElementById('mob-nav-hw')?.addEventListener('click', () => {
+  bindNavClick('mob-nav-hw', () => {
     soundService.playPop();
     navigateTo('#/homework');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  document.getElementById('mob-nav-games')?.addEventListener('click', () => {
+  bindNavClick('mob-nav-games', () => {
     soundService.playPop();
     if (window.location.hash !== '#/dashboard') {
       navigateTo('#/dashboard');
@@ -139,7 +149,7 @@ function renderMobileBottomNav() {
     }, 100);
   });
 
-  document.getElementById('mob-nav-trophies')?.addEventListener('click', () => {
+  bindNavClick('mob-nav-trophies', () => {
     soundService.playPop();
     if (window.location.hash !== '#/dashboard') {
       navigateTo('#/dashboard');
@@ -149,9 +159,16 @@ function renderMobileBottomNav() {
     }, 100);
   });
 
-  document.getElementById('mob-nav-parent')?.addEventListener('click', () => {
+  bindNavClick('mob-nav-parent', () => {
     soundService.playPop();
     navigateTo('#/parent');
+  });
+}
+
+// Keep mobile bottom nav synchronized on hash change
+if (typeof window !== 'undefined') {
+  window.addEventListener('hashchange', () => {
+    renderMobileBottomNav();
   });
 }
 

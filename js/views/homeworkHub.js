@@ -123,11 +123,7 @@ const HOMEWORK_CURRICULUM = {
   }
 };
 
-let activeSession = null;
-let balloonGameState = null;
-let currentHwTab = 'pending'; // 'pending' | 'completed'
-
-export function renderHomeworkHub() {
+let activeSession = null;export function renderHomeworkHub() {
   const el = document.getElementById('main-content');
   if (!el) return;
 
@@ -143,15 +139,73 @@ export function renderHomeworkHub() {
           <div class="hw-hero-icon">🎒</div>
           <div>
             <h1>School Homework & Games Hub</h1>
-            <p>Add your child's school homework & words to learn with animated games & balloon pop quizzes!</p>
+            <p>Speak words, practice spellings, and play balloon pop & math quiz games!</p>
           </div>
         </div>
         <div class="homework-hero-right">
-          <button class="btn-add-custom-hw" id="btn-open-hw-modal">
-            ✏️ Add Homework & Words
-          </button>
           <button class="btn-hw-back" id="btn-hw-to-dashboard">
             ← Back to Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- 🎙️ In-Page Direct Voice & Word Homework Creator (NO POPUP!) -->
+      <div class="in-page-hw-creator" id="in-page-hw-creator-section" style="background: white; border: 2.5px solid #E2E8F0; border-radius: 24px; padding: 20px; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 28px;">🎙️</span>
+            <div>
+              <h2 style="font-size: 1.35rem; color: var(--primary); font-family: var(--font-heading); margin: 0;">
+                Speak or Type Words to Practice
+              </h2>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; font-weight: 600;">
+                Tell us words or math sums! We'll turn them directly into games!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🎙️ Big Voice Dictation Button (Direct In-Page) -->
+        <div style="margin-bottom: 14px;">
+          <button class="btn-voice-dictate" id="btn-trigger-voice-inpage" style="width: 100%; min-height: 56px; padding: 12px 18px; background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1.08rem; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); cursor: pointer; transition: all 0.2s;">
+            <span id="voice-btn-icon-inpage" style="font-size: 24px;">🎙️</span>
+            <span id="voice-btn-text-inpage">Tap to Speak Words (Voice Dictation)</span>
+          </button>
+          <div id="hw-voice-status-inpage" style="margin-top: 6px; font-size: 0.85rem; font-weight: 800; color: #059669; text-align: center; min-height: 20px;"></div>
+        </div>
+
+        <!-- Quick 1-Tap Topic Packs -->
+        <div style="margin-bottom: 14px; background: #F8FAFC; padding: 10px 12px; border-radius: 16px; border: 1.5px solid #E2E8F0;">
+          <span style="font-size: 0.78rem; font-weight: 800; color: var(--text-secondary); display: block; margin-bottom: 6px;">
+            ⚡ Or Choose a Quick 1-Tap Word Pack:
+          </span>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <button class="quick-pack-btn-inpage" data-pack="Peacock\nParrot\nSparrow\nEagle\nDuck" style="padding: 6px 12px; background: white; border: 1.5px solid #DDD6FE; border-radius: 20px; font-size: 0.82rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🦚 Birds</button>
+            <button class="quick-pack-btn-inpage" data-pack="Lion\nTiger\nElephant\nGiraffe\nMonkey" style="padding: 6px 12px; background: white; border: 1.5px solid #DDD6FE; border-radius: 20px; font-size: 0.82rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🦁 Animals</button>
+            <button class="quick-pack-btn-inpage" data-pack="Apple\nBanana\nMango\nOrange\nGrapes" style="padding: 6px 12px; background: white; border: 1.5px solid #DDD6FE; border-radius: 20px; font-size: 0.82rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🍎 Fruits</button>
+            <button class="quick-pack-btn-inpage" data-pack="Red\nBlue\nGreen\nYellow\nPurple\nOrange" style="padding: 6px 12px; background: white; border: 1.5px solid #DDD6FE; border-radius: 20px; font-size: 0.82rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🌈 Colors</button>
+            <button class="quick-pack-btn-inpage" data-pack="School\nBook\nPencil\nEraser\nBag" style="padding: 6px 12px; background: white; border: 1.5px solid #DDD6FE; border-radius: 20px; font-size: 0.82rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🎒 School</button>
+            <button class="quick-pack-btn-inpage" data-pack="2 x 3 = 6\n3 x 4 = 12\n5 x 5 = 25\n10 x 2 = 20" style="padding: 6px 12px; background: white; border: 1.5px solid #DDD6FE; border-radius: 20px; font-size: 0.82rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🔢 Math Tables</button>
+          </div>
+        </div>
+
+        <!-- Editable Words Box -->
+        <div style="margin-bottom: 14px;">
+          <textarea
+            id="hw-bulk-input-inpage"
+            rows="3"
+            placeholder="Speak or type words here... (e.g. Elephant, Butterfly, 4 x 5 = 20)"
+            style="width: 100%; min-height: 95px; padding: 12px 14px; border: 2px solid #CBD5E1; border-radius: 16px; font-family: var(--font-body); font-size: 1.05rem; font-weight: 700; color: #1E1B4B; line-height: 1.4; outline: none;"
+          ></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button class="btn-cancel" id="btn-hw-clear-inpage" style="min-height: 52px; padding: 0 22px; background: #F1F5F9; border-radius: var(--r-full); font-weight: 800; font-size: 0.95rem; color: #64748B; border: none; cursor: pointer;">
+            🧹 Clear
+          </button>
+          <button class="btn-save-setting" id="btn-hw-auto-convert-inpage" style="flex: 1; min-height: 54px; padding: 0 24px; background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; border-radius: var(--r-full); font-weight: 800; font-size: 1.15rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>🚀 🎮 Turn into Game!</span>
           </button>
         </div>
       </div>
@@ -174,9 +228,6 @@ export function renderHomeworkHub() {
                 🧹 Clear Done Tasks
               </button>
             ` : ''}
-            <button class="btn-quick-upload" id="btn-quick-upload-banner">
-              ➕ Add Homework & Words
-            </button>
           </div>
         </div>
 
@@ -187,7 +238,7 @@ export function renderHomeworkHub() {
               <span style="font-size: 48px; margin-bottom: 8px; display: block;">🎉</span>
               <strong style="font-size: 1.25rem; color: #065F46;">All Homework Completed & Mastered!</strong>
               <p style="margin-top: 6px; font-size: 0.95rem; color: #047857;">
-                Great job! Your child has completed all homework tasks! Click <strong>"Add Homework & Words"</strong> for tomorrow's practice.
+                Speak or type words above to create new game practices!
               </p>
             </div>
           ` : `
@@ -264,7 +315,7 @@ export function renderHomeworkHub() {
           </div>
 
           <!-- Maths -->
-          <div class="subject-card cat-maths">
+          <div class="subject-card cat-math">
             <div class="subject-header">
               <span class="subject-icon">🔢</span>
               <h3>Maths & Tables</h3>
@@ -307,10 +358,183 @@ export function renderHomeworkHub() {
     navigateTo('#/dashboard');
   });
 
-  document.getElementById('btn-open-hw-modal')?.addEventListener('click', () => {
-    soundService.playPop();
-    showUploadHomeworkModal();
+  const textarea = document.getElementById('hw-bulk-input-inpage');
+  const voiceStatus = document.getElementById('hw-voice-status-inpage');
+  const voiceBtn = document.getElementById('btn-trigger-voice-inpage');
+  const voiceBtnIcon = document.getElementById('voice-btn-icon-inpage');
+  const voiceBtnText = document.getElementById('voice-btn-text-inpage');
+
+  // In-Page Quick pack buttons
+  document.querySelectorAll('.quick-pack-btn-inpage').forEach(btn => {
+    btn.addEventListener('click', () => {
+      soundService.playPop();
+      if (textarea) {
+        textarea.value = btn.dataset.pack;
+      }
+      if (voiceStatus) {
+        voiceStatus.innerHTML = `✅ Added <strong>${btn.innerText}</strong> pack! Tap <strong>"Turn into Game!"</strong> below.`;
+      }
+    });
   });
+
+  // Clear button
+  document.getElementById('btn-hw-clear-inpage')?.addEventListener('click', () => {
+    soundService.playPop();
+    if (textarea) textarea.value = '';
+    if (voiceStatus) voiceStatus.innerHTML = '';
+  });
+
+  // In-Page Direct Voice Dictation (NO POPUP!)
+  let inpageRecognition = null;
+  let isListeningInpage = false;
+
+  document.getElementById('btn-trigger-voice-inpage')?.addEventListener('click', () => {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      alert('Voice dictation is not supported in this browser. Please type words directly in the box below!');
+      return;
+    }
+
+    if (isListeningInpage && inpageRecognition) {
+      inpageRecognition.stop();
+      return;
+    }
+
+    try {
+      soundService.playPop();
+      const recognition = new SpeechRec();
+      inpageRecognition = recognition;
+      recognition.lang = 'en-US';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        isListeningInpage = true;
+        if (voiceBtn) {
+          voiceBtn.style.background = 'linear-gradient(135deg, #EF4444, #DC2626)';
+          voiceBtn.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.45)';
+        }
+        if (voiceBtnIcon) voiceBtnIcon.textContent = '🔴';
+        if (voiceBtnText) voiceBtnText.textContent = 'Listening... Speak Words Now! (Tap to stop)';
+        if (voiceStatus) {
+          voiceStatus.innerHTML = '🎙️ <strong>Listening... Say words like "Lion, Tiger, Elephant"</strong>';
+        }
+      };
+
+      recognition.onresult = (event) => {
+        let finalTranscripts = [];
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscripts.push(event.results[i][0].transcript);
+          }
+        }
+
+        if (finalTranscripts.length > 0) {
+          const rawSpoken = finalTranscripts.join(' ');
+          const wordsFound = rawSpoken
+            .split(/[\s,]+/)
+            .map(w => w.replace(/[^a-zA-Z0-9+\-*/=]/g, '').trim())
+            .filter(w => w.length > 1);
+
+          if (wordsFound.length > 0 && textarea) {
+            const currentLines = textarea.value.split('\n').map(l => l.trim()).filter(Boolean);
+            wordsFound.forEach(w => {
+              const cap = w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+              if (!currentLines.includes(cap)) {
+                currentLines.push(cap);
+              }
+            });
+            textarea.value = currentLines.join('\n');
+            if (voiceStatus) {
+              voiceStatus.innerHTML = `✨ Added: <strong>${wordsFound.join(', ')}</strong>! Keep speaking or tap button to stop.`;
+            }
+          }
+        }
+      };
+
+      recognition.onerror = (err) => {
+        console.warn('Speech recognition error:', err);
+      };
+
+      recognition.onend = () => {
+        isListeningInpage = false;
+        inpageRecognition = null;
+        if (voiceBtn) {
+          voiceBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+          voiceBtn.style.boxShadow = '0 4px 14px rgba(16, 185, 129, 0.3)';
+        }
+        if (voiceBtnIcon) voiceBtnIcon.textContent = '🎙️';
+        if (voiceBtnText) voiceBtnText.textContent = 'Tap to Speak Words (Voice Dictation)';
+      };
+
+      recognition.start();
+    } catch (e) {
+      console.warn('Could not start speech recognition:', e);
+    }
+  });
+
+  // Auto Convert into Games (In-Page)
+  document.getElementById('btn-hw-auto-convert-inpage')?.addEventListener('click', () => {
+    const rawText = document.getElementById('hw-bulk-input-inpage')?.value;
+    if (!rawText || !rawText.trim()) {
+      alert('Please speak or enter at least one word or question!');
+      return;
+    }
+
+    const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+    let addedCount = 0;
+
+    for (const line of lines) {
+      if (line.includes('=')) {
+        const parts = line.split('=');
+        const expr = parts[0].trim();
+        let ans = parts[1]?.trim();
+        
+        if (!ans) {
+          try {
+            const mathSafe = expr.replace(/x/gi, '*').replace(/[^0-9+\-*/]/g, '');
+            ans = String(Function(`'use strict'; return (${mathSafe})`)());
+          } catch (e) {
+            ans = '10';
+          }
+        }
+
+        const qText = `What is ${expr} = ?`;
+        const num = parseInt(ans, 10) || 0;
+        addCustomHomework({
+          subject: 'School Maths',
+          questionText: qText,
+          correctAnswer: ans,
+          options: [ans, String(num + 2), String(Math.max(1, num - 2)), String(num + 5)].sort(() => Math.random() - 0.5)
+        });
+        addedCount++;
+      } else {
+        const cleaned = sanitizeWord(line);
+        if (cleaned && isMeaningfulWord(cleaned)) {
+          const capitalized = cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
+          const info = classifyEducationalWord(capitalized);
+          const distractors = generateSpellingDistractors(capitalized);
+
+          addCustomHomework({
+            subject: info.subject,
+            questionText: `${info.promptPrefix} ${capitalized.toUpperCase()} ${info.emoji}`,
+            correctAnswer: capitalized,
+            options: [capitalized, ...distractors].sort(() => Math.random() - 0.5),
+            hint: `Look for the ${info.categoryName} with spelling: ${capitalized} ${info.emoji}`
+          });
+          addedCount++;
+        }
+      }
+    }
+
+    if (addedCount === 0) {
+      alert('No meaningful words or math equations found! Please try typing or speaking words.');
+      return;
+    }
+
+    soundService.playFanfare();
+    renderHomeworkHub();
+  });;
 
   document.getElementById('btn-quick-upload-banner')?.addEventListener('click', () => {
     soundService.playPop();

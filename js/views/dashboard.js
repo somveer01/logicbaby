@@ -726,10 +726,10 @@ function attachDashboardEvents(profile, resumeTarget) {
     navigateTo('#/homework');
   });
 
-  // Direct add homework modal from Dashboard
+  // Direct add homework from Dashboard (Navigates directly to in-page creator)
   document.getElementById('btn-dash-add-hw')?.addEventListener('click', () => {
     soundService.playPop();
-    showUploadHomeworkModal();
+    navigateTo('#/homework');
   });
 
   // View more homework tasks

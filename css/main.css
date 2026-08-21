@@ -4525,6 +4525,105 @@ img, svg {
   letter-spacing: 0.2px;
 }
 
+/* ==========================================================================
+   Responsive Button Sizing & Touch Ergonomics (Mobile & Web)
+   ========================================================================== */
+
+/* Universal Button Enhancements */
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Mobile-Specific Button Scaling (Touch Screen Ergonomics) */
+@media (max-width: 768px) {
+  .btn-dash-add-hw,
+  .btn-hw-action,
+  .btn-add-custom-hw,
+  .btn-play-dash-hw,
+  .btn-play-custom-hw,
+  .btn-voice-dictate,
+  .btn-save-setting,
+  .btn-cancel {
+    min-height: 50px !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .quick-pack-btn {
+    min-height: 44px !important;
+    padding: 8px 14px !important;
+    font-size: 0.9rem !important;
+    font-weight: 800 !important;
+    border-radius: 22px !important;
+  }
+
+  .option-tile {
+    min-height: 72px !important;
+    font-size: 1.25rem !important;
+    padding: 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .difficulty-pill {
+    min-height: 46px !important;
+    padding: 8px 16px !important;
+    font-size: 0.95rem !important;
+  }
+
+  .topic-item {
+    min-height: 52px !important;
+    padding: 12px 14px !important;
+    font-size: 0.95rem !important;
+  }
+
+  .topbar-btn {
+    min-height: 40px !important;
+    padding: 6px 12px !important;
+  }
+}
+
+/* Desktop / Web Refinement (Cursor & Balanced Proportions) */
+@media (min-width: 769px) {
+  .btn-dash-add-hw,
+  .btn-hw-action,
+  .btn-add-custom-hw {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn-dash-add-hw:hover,
+  .btn-hw-action:hover,
+  .btn-add-custom-hw:hover {
+    transform: translateY(-2px);
+  }
+
+  .quick-pack-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: transform 0.15s ease;
+  }
+
+  .quick-pack-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary);
+  }
+
+  .option-tile {
+    min-height: 80px;
+    font-size: 1.35rem;
+    padding: 16px 20px;
+  }
+}
+
+
 
 
 

@@ -800,59 +800,62 @@ export function showUploadHomeworkModal() {
 
   modalContainer.className = 'modal-container';
   modalContainer.innerHTML = `
-    <div class="modal-card" style="max-width: 620px; text-align: left;">
-      <h2 style="font-size: 1.5rem; color: var(--primary); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+    <div class="modal-card" style="max-width: 600px; text-align: left; position: relative;">
+      <h2 style="font-size: 1.55rem; color: var(--primary); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; font-family: var(--font-heading);">
         ✏️ Add Custom Homework & Spellings
       </h2>
-      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 14px;">
+      <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 16px; font-weight: 600;">
         Dictate words with your voice, tap a quick topic pack, or type words and math sums!
       </p>
 
-      <!-- 🎙️ Voice Dictation Button -->
-      <div style="margin-bottom: 14px;">
-        <button class="btn-voice-dictate" id="btn-trigger-voice" style="width: 100%; padding: 12px 16px; background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; border-radius: var(--r-md); font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); cursor: pointer;">
-          <span>🎙️ Speak Words (Voice Dictation)</span>
+      <!-- 🎙️ Voice Dictation Button (Large Touch Target) -->
+      <div style="margin-bottom: 16px;">
+        <button class="btn-voice-dictate" id="btn-trigger-voice" style="width: 100%; min-height: 56px; padding: 14px 20px; background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1.08rem; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); cursor: pointer; transition: all 0.2s;">
+          <span style="font-size: 24px;">🎙️</span>
+          <span>Tap to Speak Words (Voice Dictation)</span>
         </button>
-        <div id="hw-voice-status" style="display: none; margin-top: 6px; font-size: 0.85rem; font-weight: 700; color: #059669; text-align: center;"></div>
+        <div id="hw-voice-status" style="display: none; margin-top: 6px; font-size: 0.88rem; font-weight: 800; color: #059669; text-align: center;"></div>
       </div>
 
       <!-- Quick 1-Tap Topic Packs for Instant Testing -->
-      <div style="margin-bottom: 14px; background: #FAFAFE; padding: 10px 12px; border-radius: 12px; border: 1.5px solid #E2E8F0;">
-        <span style="font-size: 0.78rem; font-weight: 800; color: var(--text-secondary); display: block; margin-bottom: 6px;">
+      <div style="margin-bottom: 16px; background: #F8FAFC; padding: 12px 14px; border-radius: 18px; border: 2px solid #E2E8F0;">
+        <span style="font-size: 0.82rem; font-weight: 800; color: var(--text-secondary); display: block; margin-bottom: 8px;">
           ⚡ Quick 1-Tap Word & Math Packs:
         </span>
-        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-          <button class="quick-pack-btn" data-pack="Peacock\nParrot\nSparrow\nEagle\nDuck" style="padding: 4px 10px; background: white; border: 1px solid #DDD6FE; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">🦚 Birds</button>
-          <button class="quick-pack-btn" data-pack="Lion\nTiger\nElephant\nGiraffe\nMonkey" style="padding: 4px 10px; background: white; border: 1px solid #DDD6FE; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">🦁 Animals</button>
-          <button class="quick-pack-btn" data-pack="Apple\nBanana\nMango\nOrange\nGrapes" style="padding: 4px 10px; background: white; border: 1px solid #DDD6FE; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">🍎 Fruits</button>
-          <button class="quick-pack-btn" data-pack="Red\nBlue\nGreen\nYellow\nPurple\nOrange" style="padding: 4px 10px; background: white; border: 1px solid #DDD6FE; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">🌈 Colors</button>
-          <button class="quick-pack-btn" data-pack="School\nBook\nPencil\nEraser\nBag" style="padding: 4px 10px; background: white; border: 1px solid #DDD6FE; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">🎒 School</button>
-          <button class="quick-pack-btn" data-pack="2 x 3 = 6\n3 x 4 = 12\n5 x 5 = 25\n10 x 2 = 20" style="padding: 4px 10px; background: white; border: 1px solid #DDD6FE; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">🔢 Math Tables</button>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <button class="quick-pack-btn" data-pack="Peacock\nParrot\nSparrow\nEagle\nDuck" style="padding: 8px 14px; background: white; border: 2px solid #DDD6FE; border-radius: 20px; font-size: 0.88rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🦚 Birds</button>
+          <button class="quick-pack-btn" data-pack="Lion\nTiger\nElephant\nGiraffe\nMonkey" style="padding: 8px 14px; background: white; border: 2px solid #DDD6FE; border-radius: 20px; font-size: 0.88rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🦁 Animals</button>
+          <button class="quick-pack-btn" data-pack="Apple\nBanana\nMango\nOrange\nGrapes" style="padding: 8px 14px; background: white; border: 2px solid #DDD6FE; border-radius: 20px; font-size: 0.88rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🍎 Fruits</button>
+          <button class="quick-pack-btn" data-pack="Red\nBlue\nGreen\nYellow\nPurple\nOrange" style="padding: 8px 14px; background: white; border: 2px solid #DDD6FE; border-radius: 20px; font-size: 0.88rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🌈 Colors</button>
+          <button class="quick-pack-btn" data-pack="School\nBook\nPencil\nEraser\nBag" style="padding: 8px 14px; background: white; border: 2px solid #DDD6FE; border-radius: 20px; font-size: 0.88rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🎒 School</button>
+          <button class="quick-pack-btn" data-pack="2 x 3 = 6\n3 x 4 = 12\n5 x 5 = 25\n10 x 2 = 20" style="padding: 8px 14px; background: white; border: 2px solid #DDD6FE; border-radius: 20px; font-size: 0.88rem; font-weight: 800; cursor: pointer; color: var(--text-main);">🔢 Math Tables</button>
         </div>
       </div>
 
       <!-- Detected/Added Word Chips Box -->
-      <div id="hw-word-chips-box" style="display: none; margin-bottom: 12px; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: var(--r-md); padding: 10px 12px;">
-        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; font-weight: 800;">
+      <div id="hw-word-chips-box" style="display: none; margin-bottom: 14px; background: #F5F3FF; border: 2px solid #DDD6FE; border-radius: 16px; padding: 12px 14px;">
+        <div style="font-size: 0.85rem; color: var(--primary); margin-bottom: 8px; font-weight: 800;">
           ✨ Added Words (Tap ✕ to remove):
         </div>
         <div id="hw-word-chips-container"></div>
       </div>
 
       <!-- Editable Words & Questions Box -->
-      <div style="margin-bottom: 14px;">
-        <label style="font-weight: 800; font-size: 0.85rem; color: var(--text-main); display: block; margin-bottom: 6px;">
-          Words / Questions (Type or edit below):
+      <div style="margin-bottom: 16px;">
+        <label for="hw-bulk-input" style="font-weight: 800; font-size: 0.9rem; color: var(--text-main); display: block; margin-bottom: 6px;">
+          Words / Questions (1 per line):
         </label>
-        <textarea id="hw-bulk-input" rows="4" placeholder="e.g.&#10;Elephant&#10;Butterfly&#10;Sunflower&#10;5 x 6 = 30" style="width: 100%; padding: 10px 12px; border: 2px solid var(--border-light); border-radius: var(--r-md); font-family: var(--font-body); font-size: 0.95rem; line-height: 1.4;"></textarea>
+        <textarea id="hw-bulk-input" rows="4" placeholder="e.g.&#10;Elephant&#10;Butterfly&#10;Sunflower&#10;5 x 6 = 30" style="width: 100%; min-height: 100px; padding: 12px 14px; border: 2px solid #CBD5E1; border-radius: 16px; font-family: var(--font-body); font-size: 1.05rem; font-weight: 700; color: #1E1B4B; line-height: 1.4; outline: none;"></textarea>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">💡 Tip: One word or math sum per line</span>
-        <div style="display: flex; gap: 10px;">
-          <button class="btn-cancel" id="btn-hw-modal-cancel" style="padding: 10px 18px; background: #F1F5F9; border-radius: var(--r-full); font-weight: 800; color: var(--text-secondary);">Cancel</button>
-          <button class="btn-save-setting" id="btn-hw-auto-convert" style="padding: 10px 22px; background: var(--green); color: white; border-radius: var(--r-full); font-weight: 800; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">🚀 Turn into Games</button>
-        </div>
+      <!-- Big Action Buttons -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px;">
+        <button class="btn-cancel" id="btn-hw-modal-cancel" style="min-height: 52px; padding: 0 24px; background: #F1F5F9; border-radius: var(--r-full); font-weight: 800; font-size: 1.05rem; color: #475569; border: none; cursor: pointer;">
+          ❌ Cancel
+        </button>
+        <button class="btn-save-setting" id="btn-hw-auto-convert" style="flex: 1; min-height: 54px; padding: 0 24px; background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; border-radius: var(--r-full); font-weight: 800; font-size: 1.15rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>🚀 Turn into Games</span>
+        </button>
       </div>
     </div>
   `;

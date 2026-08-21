@@ -911,103 +911,24 @@ export function showUploadHomeworkModal() {
     });
   });
 
-  // Mobile Voice Recognition (Speech-to-Text)
-  let activeRecognition = null;
-  let isListening = false;
-
+  // Open ChatGPT-Style Voice Dictation Studio
   document.getElementById('btn-trigger-voice')?.addEventListener('click', () => {
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRec) {
-      alert('Voice dictation is not supported in this browser. Please type words directly in the box below!');
-      return;
-    }
-
-    if (isListening && activeRecognition) {
-      activeRecognition.stop();
-      return;
-    }
-
-    try {
-      soundService.playPop();
-      const recognition = new SpeechRec();
-      activeRecognition = recognition;
-      recognition.lang = 'en-US';
-      recognition.continuous = true;
-      recognition.interimResults = true;
-
-      recognition.onstart = () => {
-        isListening = true;
-        if (voiceBtn) {
-          voiceBtn.style.background = 'linear-gradient(135deg, #EF4444, #DC2626)';
-          voiceBtn.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.45)';
-        }
-        if (voiceBtnIcon) voiceBtnIcon.textContent = '🔴';
-        if (voiceBtnText) voiceBtnText.textContent = 'Listening... Speak Words Now!';
-        if (voiceStatus) {
-          voiceStatus.style.background = '#FEF2F2';
-          voiceStatus.style.borderColor = '#FCA5A5';
-          voiceStatus.style.color = '#991B1B';
-          voiceStatus.innerHTML = '🎙️ <strong>Listening... Say your words now!</strong> (Tap again when done)';
-        }
-      };
-
-      recognition.onresult = (event) => {
-        let finalTranscripts = [];
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            finalTranscripts.push(event.results[i][0].transcript);
+    soundService.playPop();
+    openChatGptVoiceStudio((words) => {
+      if (words && words.length > 0 && textarea) {
+        const currentLines = textarea.value.split('\n').map(l => l.trim()).filter(Boolean);
+        words.forEach(w => {
+          if (!currentLines.includes(w)) {
+            currentLines.push(w);
           }
-        }
-
-        if (finalTranscripts.length > 0) {
-          const rawSpoken = finalTranscripts.join(' ');
-          // Clean into clean individual words
-          const wordsFound = rawSpoken
-            .split(/[\s,]+/)
-            .map(w => w.replace(/[^a-zA-Z0-9+\-*/=]/g, '').trim())
-            .filter(w => w.length > 1);
-
-          if (wordsFound.length > 0 && textarea) {
-            const currentLines = textarea.value.split('\n').map(l => l.trim()).filter(Boolean);
-            wordsFound.forEach(w => {
-              const cap = w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
-              if (!currentLines.includes(cap)) {
-                currentLines.push(cap);
-              }
-            });
-            textarea.value = currentLines.join('\n');
-            updateChipsFromInput();
-            soundService.playCorrect();
-
-            if (voiceStatus) {
-              voiceStatus.innerHTML = `✨ Added: <strong>${wordsFound.join(', ')}</strong>! Keep speaking or tap button when done.`;
-            }
-          }
-        }
-      };
-
-      recognition.onerror = (err) => {
-        console.warn('Speech recognition error:', err);
+        });
+        textarea.value = currentLines.join('\n');
+        updateChipsFromInput();
         if (voiceStatus) {
-          voiceStatus.innerHTML = '💡 Voice listening finished. You can type words or tap "Turn into Game!"';
+          voiceStatus.innerHTML = `✨ Added <strong>${words.length} words</strong> via ChatGPT Voice Mode! Tap <strong>"Turn into Game!"</strong> below.`;
         }
-      };
-
-      recognition.onend = () => {
-        isListening = false;
-        activeRecognition = null;
-        if (voiceBtn) {
-          voiceBtn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
-          voiceBtn.style.boxShadow = '0 6px 18px rgba(16, 185, 129, 0.35)';
-        }
-        if (voiceBtnIcon) voiceBtnIcon.textContent = '🎙️';
-        if (voiceBtnText) voiceBtnText.textContent = 'Tap to Speak Words (Voice Dictation)';
-      };
-
-      recognition.start();
-    } catch (e) {
-      console.warn('Could not start speech recognition:', e);
-    }
+      }
+    });
   });
 
   // Auto Convert into Games
@@ -1072,6 +993,163 @@ export function showUploadHomeworkModal() {
     closeModal();
     soundService.playFanfare();
     renderHomeworkHub();
+  });
+}
+
+/**
+ * ChatGPT-Style Continuous Voice Studio Modal
+ */
+function openChatGptVoiceStudio(onDone) {
+  const modalContainer = document.getElementById('modal-container');
+  if (!modalContainer) return;
+
+  const collectedWords = [];
+  let shouldKeepListening = true;
+  let recognition = null;
+
+  modalContainer.className = 'modal-container';
+  modalContainer.innerHTML = `
+    <div class="modal-card chatgpt-voice-card" style="max-width: 520px; border-radius: 28px;">
+      <h3 style="font-size: 1.45rem; font-family: var(--font-heading); color: #C4B5FD; margin-bottom: 2px;">
+        🎙️ ChatGPT Voice Studio
+      </h3>
+      <p style="font-size: 0.88rem; color: #94A3B8; margin-bottom: 10px;">
+        Speak naturally! Say words, spellings or math. It listens continuously until you tap Done.
+      </p>
+
+      <div class="voice-orb-wrap" id="btn-toggle-listening-orb" title="Voice Active">
+        <div class="voice-orb-glow-ring"></div>
+        <div class="chatgpt-voice-orb">🎙️</div>
+      </div>
+
+      <div class="soundwave-visualizer">
+        <div class="soundwave-bar"></div>
+        <div class="soundwave-bar"></div>
+        <div class="soundwave-bar"></div>
+        <div class="soundwave-bar"></div>
+        <div class="soundwave-bar"></div>
+        <div class="soundwave-bar"></div>
+      </div>
+
+      <div id="voice-mode-status-text" style="font-size: 0.95rem; font-weight: 800; color: #34D399; margin-bottom: 10px;">
+        🟢 Listening continuously... Say your words now!
+      </div>
+
+      <div class="voice-transcript-box" id="voice-live-transcript-box">
+        (Say words like "Peacock", "Tiger", "Elephant", "Apple", "2 + 2 = 4"...)
+      </div>
+
+      <div class="voice-recognized-chips" id="voice-recognized-chips-container"></div>
+
+      <!-- Actions -->
+      <div style="display: flex; gap: 12px; width: 100%; margin-top: 8px;">
+        <button class="btn-cancel" id="btn-cancel-voice-studio" style="min-height: 52px; padding: 0 20px; background: rgba(255,255,255,0.12); color: #E2E8F0; border-radius: var(--r-full); font-weight: 800; font-size: 1rem; border: none; cursor: pointer;">
+          ❌ Cancel
+        </button>
+        <button class="btn-save-setting" id="btn-finish-voice-studio" style="flex: 1; min-height: 54px; padding: 0 22px; background: linear-gradient(135deg, #10B981, #059669); color: white; border-radius: var(--r-full); font-weight: 800; font-size: 1.1rem; border: none; cursor: pointer; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>⏹️ Done (Add Words)</span>
+        </button>
+      </div>
+    </div>
+  `;
+
+  const transcriptBox = document.getElementById('voice-live-transcript-box');
+  const chipsBox = document.getElementById('voice-recognized-chips-container');
+  const statusText = document.getElementById('voice-mode-status-text');
+
+  const updateChipsUi = () => {
+    if (!chipsBox) return;
+    chipsBox.innerHTML = collectedWords.map(w => `<span class="voice-tag-chip">✨ ${escapeHtml(w)}</span>`).join('');
+  };
+
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  function startRecognition() {
+    if (!shouldKeepListening || !SpeechRec) return;
+    try {
+      recognition = new SpeechRec();
+      recognition.lang = 'en-US';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            const wordsFound = transcript
+              .split(/[\s,]+/)
+              .map(w => w.replace(/[^a-zA-Z0-9+\-*/=]/g, '').trim())
+              .filter(w => w.length > 0);
+
+            wordsFound.forEach(w => {
+              const cap = w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+              if (!collectedWords.includes(cap)) {
+                collectedWords.push(cap);
+              }
+            });
+            updateChipsUi();
+            soundService.playCorrect();
+          } else {
+            interim += transcript;
+          }
+        }
+
+        if (transcriptBox) {
+          transcriptBox.innerHTML = (collectedWords.length ? `<strong>Captured:</strong> ${collectedWords.join(', ')}<br>` : '') +
+            (interim ? `<span style="color: #6EE7B7;">Speaking: ${escapeHtml(interim)}...</span>` : '');
+        }
+      };
+
+      recognition.onend = () => {
+        // Continuous auto-restart loop like ChatGPT voice mode until user clicks Done or Cancel!
+        if (shouldKeepListening) {
+          setTimeout(startRecognition, 150);
+        }
+      };
+
+      recognition.onerror = (err) => {
+        console.warn('Voice recognition retry:', err);
+        if (shouldKeepListening) {
+          setTimeout(startRecognition, 350);
+        }
+      };
+
+      recognition.start();
+    } catch (e) {
+      console.warn('Voice start exception:', e);
+      if (shouldKeepListening) {
+        setTimeout(startRecognition, 400);
+      }
+    }
+  }
+
+  if (SpeechRec) {
+    startRecognition();
+  } else {
+    if (statusText) {
+      statusText.innerHTML = '⚠️ Browser microphone not supported. Please type words:';
+      statusText.style.color = '#F87171';
+    }
+  }
+
+  // Done button
+  document.getElementById('btn-finish-voice-studio')?.addEventListener('click', () => {
+    shouldKeepListening = false;
+    try { recognition?.stop(); } catch (e) {}
+    soundService.playFanfare();
+    showUploadHomeworkModal();
+    if (onDone) {
+      onDone(collectedWords);
+    }
+  });
+
+  // Cancel button
+  document.getElementById('btn-cancel-voice-studio')?.addEventListener('click', () => {
+    shouldKeepListening = false;
+    try { recognition?.stop(); } catch (e) {}
+    soundService.playPop();
+    showUploadHomeworkModal();
   });
 }
 

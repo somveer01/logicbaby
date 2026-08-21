@@ -1,0 +1,47 @@
+name: Build Android Mobile APK
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'logicbaby_mobile/**'
+      - '.github/workflows/build-android.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: logicbaby_mobile
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.x'
+          channel: 'stable'
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --split-per-abi --release || flutter build apk --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: logicbaby-android-apk
+          path: logicbaby_mobile/build/app/outputs/flutter-apk/*.apk
+          if-no-files-found: warn

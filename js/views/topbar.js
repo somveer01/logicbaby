@@ -25,6 +25,9 @@ export function renderTopbar() {
       </div>
     </div>
     <div class="topbar-right">
+      <button class="topbar-btn pwa-install-btn" id="btn-pwa-install" style="display: ${deferredPrompt ? 'inline-flex' : 'none'}; background: linear-gradient(135deg, #EC4899, #DB2777); color: white; box-shadow: 0 3px 10px rgba(236, 72, 153, 0.3); font-weight: 800; font-size: 0.82rem; align-items: center; gap: 4px;">
+        📲 Install App
+      </button>
       <button class="topbar-btn hw-nav-btn" id="btn-homework-nav" style="background: linear-gradient(135deg, #10B981, #059669); color: white; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);">
         🎒 Homework
       </button>
@@ -58,6 +61,19 @@ export function renderTopbar() {
     showAgeSelector(true);
   });
 
+  // PWA Install click handler
+  document.getElementById('btn-pwa-install')?.addEventListener('click', async () => {
+    soundService.playPop();
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        deferredPrompt = null;
+        renderTopbar();
+      }
+    }
+  });
+
   document.getElementById('btn-sound-toggle')?.addEventListener('click', () => {
     AppState.soundEnabled = soundService.toggleSound();
     speechService.setEnabled(AppState.soundEnabled);
@@ -68,6 +84,23 @@ export function renderTopbar() {
   document.getElementById('btn-parent-zone')?.addEventListener('click', () => {
     soundService.playPop();
     navigateTo('#/parent');
+  });
+}
+
+// Global PWA install prompt handler
+let deferredPrompt = null;
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('btn-pwa-install');
+    if (btn) btn.style.display = 'inline-flex';
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    const btn = document.getElementById('btn-pwa-install');
+    if (btn) btn.style.display = 'none';
   });
 }
 

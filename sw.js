@@ -3,7 +3,7 @@
 // Caches core application assets and serves them offline
 // ==========================================================================
 
-const CACHE_NAME = 'logicbaby-v2';
+const CACHE_NAME = 'logicbaby-v3';
 
 const STATIC_ASSETS = [
   './',

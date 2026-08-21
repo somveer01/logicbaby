@@ -10,6 +10,7 @@ import { getProfileBadges, getUnlockedBadgeCount } from '../services/badgeServic
 import { soundService } from '../services/soundService.js';
 import { speechService } from '../services/speechService.js';
 import { navigateTo } from '../router.js';
+import { showUploadHomeworkModal } from './homeworkHub.js';
 
 let selectedPathCategory = 'patterns';
 let mysteryGiftOpened = false;
@@ -725,10 +726,10 @@ function attachDashboardEvents(profile, resumeTarget) {
     navigateTo('#/homework');
   });
 
-  // Direct add homework from Dashboard (Navigates directly to in-page creator)
+  // Direct add homework modal from Dashboard
   document.getElementById('btn-dash-add-hw')?.addEventListener('click', () => {
     soundService.playPop();
-    navigateTo('#/homework');
+    showUploadHomeworkModal();
   });
 
   // View more homework tasks

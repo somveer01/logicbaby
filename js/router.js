@@ -31,7 +31,11 @@ export function registerNotFound(handler) {
  * @param {string} hash - e.g. '#/dashboard' or '#/game/patterns'
  */
 export function navigateTo(hash) {
-  window.location.hash = hash;
+  if (window.location.hash === hash) {
+    processCurrentRoute();
+  } else {
+    window.location.hash = hash;
+  }
 }
 
 /**

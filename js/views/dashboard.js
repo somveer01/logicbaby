@@ -10,7 +10,6 @@ import { getProfileBadges, getUnlockedBadgeCount } from '../services/badgeServic
 import { soundService } from '../services/soundService.js';
 import { speechService } from '../services/speechService.js';
 import { navigateTo } from '../router.js';
-import { showUploadHomeworkModal } from './homeworkHub.js';
 
 let selectedPathCategory = 'patterns';
 let mysteryGiftOpened = false;

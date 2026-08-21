@@ -1062,7 +1062,44 @@ function openChatGptVoiceStudio(onDone) {
     chipsBox.innerHTML = collectedWords.map(w => `<span class="voice-tag-chip">✨ ${escapeHtml(w)}</span>`).join('');
   };
 
+  // Quick word tap inside Voice Studio
+  const addWordDirectly = (word) => {
+    const cap = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    if (!collectedWords.includes(cap)) {
+      collectedWords.push(cap);
+      updateChipsUi();
+      soundService.playPop();
+      if (transcriptBox) {
+        transcriptBox.innerHTML = `<strong>Captured:</strong> ${collectedWords.join(', ')}`;
+      }
+    }
+  };
+
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  function showPermissionGuide(errName) {
+    if (!statusText) return;
+    const isHttpOnMobile = window.location.protocol !== 'https:' &&
+                           window.location.hostname !== 'localhost' &&
+                           window.location.hostname !== '127.0.0.1';
+
+    if (isHttpOnMobile) {
+      statusText.innerHTML = `
+        <div style="background: #FEF3C7; border: 1.5px solid #F59E0B; padding: 10px 14px; border-radius: 14px; color: #92400E; font-size: 0.85rem; text-align: left; line-height: 1.4;">
+          <strong>🔒 Microphone needs HTTPS on mobile:</strong><br>
+          Browsers block mic over local Wi-Fi HTTP. To use voice on phone, open:<br>
+          <a href="https://somveer01.github.io/logicbaby/#/homework" target="_blank" style="color: #6C3FB5; font-weight: 800; text-decoration: underline;">👉 https://somveer01.github.io/logicbaby/</a><br>
+          <span style="font-size: 0.8rem; margin-top: 4px; display: block;">Or tap quick words below!</span>
+        </div>
+      `;
+    } else {
+      statusText.innerHTML = `
+        <div style="background: #FEE2E2; border: 1.5px solid #EF4444; padding: 8px 12px; border-radius: 12px; color: #991B1B; font-size: 0.88rem;">
+          ⚠️ Microphone access blocked. Please tap <strong>"Allow"</strong> in your browser address bar permissions.
+        </div>
+      `;
+    }
+  }
 
   function startRecognition() {
     if (!shouldKeepListening || !SpeechRec) return;
@@ -1071,6 +1108,13 @@ function openChatGptVoiceStudio(onDone) {
       recognition.lang = 'en-US';
       recognition.continuous = true;
       recognition.interimResults = true;
+
+      recognition.onstart = () => {
+        if (statusText) {
+          statusText.innerHTML = '🟢 <strong>Listening continuously... Speak your words!</strong>';
+          statusText.style.color = '#34D399';
+        }
+      };
 
       recognition.onresult = (event) => {
         let interim = '';
@@ -1109,9 +1153,11 @@ function openChatGptVoiceStudio(onDone) {
       };
 
       recognition.onerror = (err) => {
-        console.warn('Voice recognition retry:', err);
-        if (shouldKeepListening) {
-          setTimeout(startRecognition, 350);
+        console.warn('Voice recognition retry/error:', err.error);
+        if (err.error === 'not-allowed' || err.error === 'service-not-allowed') {
+          showPermissionGuide(err.error);
+        } else if (shouldKeepListening) {
+          setTimeout(startRecognition, 400);
         }
       };
 
@@ -1119,18 +1165,29 @@ function openChatGptVoiceStudio(onDone) {
     } catch (e) {
       console.warn('Voice start exception:', e);
       if (shouldKeepListening) {
-        setTimeout(startRecognition, 400);
+        setTimeout(startRecognition, 500);
       }
     }
   }
 
-  if (SpeechRec) {
+  // Request explicit mic permission via getUserMedia first, then start speech recognition
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then((stream) => {
+        // Stop probe stream tracks
+        stream.getTracks().forEach(t => t.stop());
+        startRecognition();
+      })
+      .catch((err) => {
+        console.warn('Microphone permission request failed:', err);
+        showPermissionGuide(err.name);
+        // Still try SpeechRec in case native browser speech works independently
+        startRecognition();
+      });
+  } else if (SpeechRec) {
     startRecognition();
   } else {
-    if (statusText) {
-      statusText.innerHTML = '⚠️ Browser microphone not supported. Please type words:';
-      statusText.style.color = '#F87171';
-    }
+    showPermissionGuide('unsupported');
   }
 
   // Done button

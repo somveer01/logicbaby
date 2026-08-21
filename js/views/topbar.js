@@ -81,7 +81,75 @@ export function renderTopbar() {
     renderTopbar(); // Re-render to update icon
   });
 
-  document.getElementById('btn-parent-zone')?.addEventListener('click', () => {
+  // Render native mobile bottom dock
+  renderMobileBottomNav();
+}
+
+function renderMobileBottomNav() {
+  const nav = document.getElementById('mobile-bottom-nav');
+  if (!nav) return;
+
+  const currentHash = window.location.hash || '#/dashboard';
+  const isHome = currentHash === '#/dashboard' || currentHash === '' || currentHash.startsWith('#/game');
+  const isHw = currentHash.startsWith('#/homework');
+  const isParent = currentHash.startsWith('#/parent');
+
+  nav.innerHTML = `
+    <div class="mobile-nav-item ${isHome ? 'active' : ''}" id="mob-nav-home">
+      <div class="mobile-nav-icon">🏠</div>
+      <span class="mobile-nav-label">Home</span>
+    </div>
+    <div class="mobile-nav-item ${isHw ? 'active' : ''}" id="mob-nav-hw">
+      <div class="mobile-nav-icon">🎒</div>
+      <span class="mobile-nav-label">Homework</span>
+    </div>
+    <div class="mobile-nav-item" id="mob-nav-games">
+      <div class="mobile-nav-icon">🏝️</div>
+      <span class="mobile-nav-label">Worlds</span>
+    </div>
+    <div class="mobile-nav-item" id="mob-nav-trophies">
+      <div class="mobile-nav-icon">🏆</div>
+      <span class="mobile-nav-label">Trophies</span>
+    </div>
+    <div class="mobile-nav-item ${isParent ? 'active' : ''}" id="mob-nav-parent">
+      <div class="mobile-nav-icon">⚙️</div>
+      <span class="mobile-nav-label">Settings</span>
+    </div>
+  `;
+
+  // Attach mobile nav events
+  document.getElementById('mob-nav-home')?.addEventListener('click', () => {
+    soundService.playPop();
+    navigateTo('#/dashboard');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  document.getElementById('mob-nav-hw')?.addEventListener('click', () => {
+    soundService.playPop();
+    navigateTo('#/homework');
+  });
+
+  document.getElementById('mob-nav-games')?.addEventListener('click', () => {
+    soundService.playPop();
+    if (window.location.hash !== '#/dashboard') {
+      navigateTo('#/dashboard');
+    }
+    setTimeout(() => {
+      document.querySelector('.world-game-grid')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  });
+
+  document.getElementById('mob-nav-trophies')?.addEventListener('click', () => {
+    soundService.playPop();
+    if (window.location.hash !== '#/dashboard') {
+      navigateTo('#/dashboard');
+    }
+    setTimeout(() => {
+      document.querySelector('.trophy-cabinet-section')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  });
+
+  document.getElementById('mob-nav-parent')?.addEventListener('click', () => {
     soundService.playPop();
     navigateTo('#/parent');
   });

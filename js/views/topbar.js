@@ -25,6 +25,9 @@ export function renderTopbar() {
       </div>
     </div>
     <div class="topbar-right">
+      <button class="topbar-btn hw-nav-btn" id="btn-homework-nav" style="background: linear-gradient(135deg, #10B981, #059669); color: white; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);">
+        🎒 Homework
+      </button>
       <div class="stat-pill stars">⭐ ${stars}</div>
       <div class="stat-pill streak">🔥 ${streak}</div>
       <button class="topbar-btn age-badge-btn" id="btn-age-switch">
@@ -40,6 +43,10 @@ export function renderTopbar() {
   `;
 
   // Event listeners
+  document.getElementById('btn-homework-nav')?.addEventListener('click', () => {
+    soundService.playPop();
+    navigateTo('#/homework');
+  });
   document.getElementById('logo-home')?.addEventListener('click', () => {
     soundService.playPop();
     navigateTo('#/dashboard');

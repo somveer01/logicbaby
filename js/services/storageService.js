@@ -58,7 +58,10 @@ function createBlankProfile(id, name, ageGroup, avatar) {
     mistakeLog: [],
     sessionHistory: [],
     seenQuestionIds: [],
-    preferredDifficulty: 1
+    seenQuestionSignatures: [],
+    preferredDifficulty: 1,
+    customHomework: [],
+    homeworkCompletedCount: 0
   };
 }
 
@@ -438,11 +441,13 @@ export function deleteProfile(profileId) {
 }
 
 /**
- * Mark question IDs as seen for the active profile (retains max 50 recent IDs)
+ * Mark question IDs and signatures as seen for the active profile permanently.
+ * Never truncates or discards history to ensure questions do not repeat for the user.
  * @param {Array<string>} questionIds
+ * @param {Array<string>} [questionSignatures=[]]
  */
-export function markQuestionsAsSeen(questionIds) {
-  if (!questionIds || !questionIds.length) return;
+export function markQuestionsAsSeen(questionIds, questionSignatures = []) {
+  if ((!questionIds || !questionIds.length) && (!questionSignatures || !questionSignatures.length)) return;
   const data = loadData();
   const profile = data.profiles[data.activeProfileId];
   if (!profile) return;
@@ -450,16 +455,24 @@ export function markQuestionsAsSeen(questionIds) {
   if (!Array.isArray(profile.seenQuestionIds)) {
     profile.seenQuestionIds = [];
   }
+  if (!Array.isArray(profile.seenQuestionSignatures)) {
+    profile.seenQuestionSignatures = [];
+  }
 
-  questionIds.forEach(id => {
-    if (!profile.seenQuestionIds.includes(id)) {
-      profile.seenQuestionIds.push(id);
-    }
-  });
+  if (Array.isArray(questionIds)) {
+    questionIds.forEach(id => {
+      if (id && !profile.seenQuestionIds.includes(id)) {
+        profile.seenQuestionIds.push(id);
+      }
+    });
+  }
 
-  // Keep a maximum buffer of 50 to allow cycling
-  if (profile.seenQuestionIds.length > 50) {
-    profile.seenQuestionIds = profile.seenQuestionIds.slice(profile.seenQuestionIds.length - 50);
+  if (Array.isArray(questionSignatures)) {
+    questionSignatures.forEach(sig => {
+      if (sig && !profile.seenQuestionSignatures.includes(sig)) {
+        profile.seenQuestionSignatures.push(sig);
+      }
+    });
   }
 
   saveData(data);
@@ -475,7 +488,35 @@ export function getSeenQuestions() {
 }
 
 /**
- * Clear seen questions history
+ * Get list of seen question semantic signatures for the active profile
+ * @returns {Array<string>}
+ */
+export function getSeenSignatures() {
+  const profile = getActiveProfile();
+  return Array.isArray(profile?.seenQuestionSignatures) ? profile.seenQuestionSignatures : [];
+}
+
+/**
+ * Check if a question ID or signature has already been seen by the active profile
+ * @param {string} id
+ * @param {string} [signature]
+ * @returns {boolean}
+ */
+export function hasQuestionBeenSeen(id, signature = null) {
+  const profile = getActiveProfile();
+  if (!profile) return false;
+
+  if (id && Array.isArray(profile.seenQuestionIds) && profile.seenQuestionIds.includes(id)) {
+    return true;
+  }
+  if (signature && Array.isArray(profile.seenQuestionSignatures) && profile.seenQuestionSignatures.includes(signature)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Clear seen questions history (IDs and signatures)
  */
 export function clearSeenQuestions() {
   const data = loadData();
@@ -483,6 +524,122 @@ export function clearSeenQuestions() {
   if (!profile) return;
 
   profile.seenQuestionIds = [];
+  profile.seenQuestionSignatures = [];
   saveData(data);
 }
+
+// ------------------------------------------------------------------
+// School Homework Revision System
+// ------------------------------------------------------------------
+
+/**
+ * Get all custom homework items for active profile
+ */
+export function getCustomHomework() {
+  const profile = getActiveProfile();
+  return Array.isArray(profile?.customHomework) ? profile.customHomework : [];
+}
+
+/**
+ * Add a custom homework item
+ */
+export function addCustomHomework({ subject, questionText, correctAnswer, options, hint }) {
+  const data = loadData();
+  const profile = data.profiles[data.activeProfileId];
+  if (!profile) return;
+
+  if (!Array.isArray(profile.customHomework)) {
+    profile.customHomework = [];
+  }
+
+  const id = 'hw-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+  const newItem = {
+    id,
+    subject: subject || 'English',
+    questionText: questionText.trim(),
+    correctAnswer: correctAnswer.trim(),
+    options: options && options.length ? options : [correctAnswer.trim()],
+    hint: hint ? hint.trim() : '',
+    createdAt: new Date().toISOString()
+  };
+
+  profile.customHomework.unshift(newItem);
+  saveData(data);
+  return newItem;
+}
+
+/**
+ * Delete a custom homework item
+ */
+export function deleteCustomHomework(homeworkId) {
+  const data = loadData();
+  const profile = data.profiles[data.activeProfileId];
+  if (!profile || !Array.isArray(profile.customHomework)) return;
+
+  profile.customHomework = profile.customHomework.filter(h => h.id !== homeworkId);
+  saveData(data);
+}
+
+/**
+ * Record a completed homework revision quest
+ */
+export function recordHomeworkCompleted(stars = 3) {
+  const data = loadData();
+  const profile = data.profiles[data.activeProfileId];
+  if (!profile) return;
+
+  profile.homeworkCompletedCount = (profile.homeworkCompletedCount || 0) + 1;
+  profile.stats.totalStars += stars;
+  saveData(data);
+}
+
+/**
+ * Mark an individual homework item as completed/mastered
+ */
+export function markHomeworkItemCompleted(homeworkId, stars = 3) {
+  const data = loadData();
+  const profile = data.profiles[data.activeProfileId];
+  if (!profile || !Array.isArray(profile.customHomework)) return;
+
+  const item = profile.customHomework.find(h => h.id === homeworkId);
+  if (item) {
+    item.completed = true;
+    item.completedAt = new Date().toISOString();
+    item.stars = stars;
+    profile.stats.totalStars += stars;
+    profile.homeworkCompletedCount = (profile.homeworkCompletedCount || 0) + 1;
+    saveData(data);
+  }
+}
+
+/**
+ * Reset a completed homework item back to pending
+ */
+export function resetHomeworkItem(homeworkId) {
+  const data = loadData();
+  const profile = data.profiles[data.activeProfileId];
+  if (!profile || !Array.isArray(profile.customHomework)) return;
+
+  const item = profile.customHomework.find(h => h.id === homeworkId);
+  if (item) {
+    item.completed = false;
+    delete item.completedAt;
+    saveData(data);
+  }
+}
+
+/**
+ * Remove all completed homework items
+ */
+export function clearCompletedHomework() {
+  const data = loadData();
+  const profile = data.profiles[data.activeProfileId];
+  if (!profile || !Array.isArray(profile.customHomework)) return;
+
+  profile.customHomework = profile.customHomework.filter(h => !h.completed);
+  saveData(data);
+}
+
+
+
 

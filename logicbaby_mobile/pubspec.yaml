@@ -1,0 +1,37 @@
+name: logicbaby_mobile
+description: "LogicBaby — Fun Visual Logic Reasoning Puzzles for Kids"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # UI, Icons & Typography
+  google_fonts: ^6.1.0
+  flutter_svg: ^2.0.9
+  confetti: ^0.7.0
+  
+  # Audio, Speech & Haptics
+  audioplayers: ^5.2.1
+  flutter_tts: ^3.8.5
+  
+  # Offline Local Persistence
+  shared_preferences: ^2.2.2
+  
+  # In-App Purchases & Subscriptions (Play Store & App Store)
+  purchases_flutter: ^6.20.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/sounds/

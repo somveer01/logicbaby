@@ -21,6 +21,7 @@ let dashboardModule = null;
 let ageSelectorModule = null;
 let gameArenaModule = null;
 let parentDashboardModule = null;
+let homeworkModule = null;
 
 // ------------------------------------------------------------------
 // App Initialization
@@ -34,13 +35,28 @@ async function initApp() {
     console.warn('LocalStorage unavailable — progress will not be saved.');
   }
 
-  // Register Service Worker for offline capability
+  // Handle Service Worker / Cache invalidation for instant updates
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then((reg) => console.log('🧠 LogicBaby: Offline ServiceWorker registered', reg.scope))
-        .catch((err) => console.log('ServiceWorker registration error:', err));
-    });
+    const isLocalDev = window.location.hostname === 'localhost' ||
+                       window.location.hostname === '127.0.0.1' ||
+                       window.location.hostname.startsWith('192.168.');
+    if (isLocalDev) {
+      // Unregister any active service worker and purge cache storage so edits reflect instantly
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (const reg of regs) reg.unregister();
+      });
+      if ('caches' in window) {
+        caches.keys().then(keys => {
+          for (const k of keys) caches.delete(k);
+        });
+      }
+    } else {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('🧠 LogicBaby: Offline ServiceWorker registered', reg.scope))
+          .catch((err) => console.log('ServiceWorker registration error:', err));
+      });
+    }
   }
 
   // Ensure audio context is ready on first user interaction
@@ -55,6 +71,7 @@ async function initApp() {
 
   // Register routes
   registerRoute('#/dashboard', handleDashboard);
+  registerRoute('#/homework', handleHomework);
   registerRoute('#/game/:category/:level', handleGameLevel);
   registerRoute('#/game/:category', handleGame);
   registerRoute('#/parent', handleParent);
@@ -122,6 +139,15 @@ async function handleParent() {
   if (topbarModule) topbarModule.renderTopbar();
 }
 
+async function handleHomework() {
+  AppState.currentView = 'homework';
+  if (!homeworkModule) {
+    homeworkModule = await import('./views/homeworkHub.js');
+  }
+  homeworkModule.renderHomeworkHub();
+  if (topbarModule) topbarModule.renderTopbar();
+}
+
 // ------------------------------------------------------------------
 // Age Selector (first-time flow)
 // ------------------------------------------------------------------
@@ -130,19 +156,31 @@ export async function showAgeSelector(closable = false) {
   if (!ageSelectorModule) {
     ageSelectorModule = await import('./views/ageSelector.js');
   }
-  ageSelectorModule.showAgeSelectorModal(closable, (ageGroup) => {
+  ageSelectorModule.showAgeSelectorModal(closable, (result) => {
+    const ageGroup = (typeof result === 'object' && result.ageGroup) ? result.ageGroup : (typeof result === 'string' ? result : '5-6');
+    const childName = (typeof result === 'object' && result.name) ? result.name.trim() : 'Explorer';
+    const avatarMap = { '3-4': '🐣', '5-6': '🦊', '7-8': '🦁', '9+': '🦅' };
+    const chosenAvatar = (typeof result === 'object' && result.avatar) ? result.avatar : (avatarMap[ageGroup] || '🦊');
+
     // Create or update profile
     if (!AppState.currentProfile) {
-      const avatarMap = { '3-4': '🐣', '5-6': '🦊', '7-8': '🦁', '9+': '🦅' };
-      const profile = createProfile('Player', ageGroup, avatarMap[ageGroup] || '🦊');
+      const profile = createProfile(childName, ageGroup, chosenAvatar);
       AppState.currentProfile = profile;
       // Start router after profile is created
       initRouter();
       navigateTo('#/dashboard');
     } else {
-      // Just updating age group
+      // Updating profile details
       import('./services/storageService.js').then(mod => {
         mod.updateAgeGroup(ageGroup);
+        if (childName && childName !== 'Explorer') {
+          mod.updateProfileName(childName);
+          AppState.currentProfile.name = childName;
+        }
+        if (chosenAvatar) {
+          mod.updateAvatar(chosenAvatar);
+          AppState.currentProfile.avatar = chosenAvatar;
+        }
         AppState.currentProfile.ageGroup = ageGroup;
         // Refresh current view
         if (AppState.currentView === 'dashboard' && dashboardModule) {
@@ -204,7 +242,10 @@ export async function refreshTopbar() {
   if (topbarModule) topbarModule.renderTopbar();
 }
 
-// ------------------------------------------------------------------
-// Boot
-// ------------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', initApp);
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
+}

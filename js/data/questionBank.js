@@ -4,7 +4,7 @@
 // ==========================================================================
 
 import { generateProceduralQuestion } from './questionGenerator.js';
-import { getSeenQuestions } from '../services/storageService.js';
+import { getSeenQuestions, getSeenSignatures, hasQuestionBeenSeen } from '../services/storageService.js';
 
 // Runtime cache for dynamically generated questions
 const RUNTIME_QUESTIONS_CACHE = new Map();
@@ -43,6 +43,34 @@ function optionSvg(content) {
 }
 function questionSvg(content, w = 400, h = 140) {
   return svgWrap(w, h, content);
+}
+
+function matrix2x2(cardA, cardB, cardC) {
+  return `
+    <g class="anim-float">
+      <!-- Row 1: Card A -->
+      <rect x="70" y="10" width="105" height="52" rx="12" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2.5" filter="drop-shadow(0 4px 6px rgba(245, 158, 11, 0.15))"/>
+      <text x="122" y="47" font-size="34" text-anchor="middle">${cardA}</text>
+      
+      <!-- Arrow 1 -->
+      <text x="195" y="45" font-size="24" fill="${C.primaryLight || '#9880FF'}" font-weight="bold" class="anim-pulse">➔</text>
+      
+      <!-- Row 1: Card B -->
+      <rect x="225" y="10" width="105" height="52" rx="12" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2.5" filter="drop-shadow(0 4px 6px rgba(245, 158, 11, 0.15))"/>
+      <text x="277" y="47" font-size="34" text-anchor="middle">${cardB}</text>
+
+      <!-- Row 2: Card C -->
+      <rect x="70" y="74" width="105" height="52" rx="12" fill="#F0F9FF" stroke="#0284C7" stroke-width="2.5" filter="drop-shadow(0 4px 6px rgba(2, 132, 199, 0.15))"/>
+      <text x="122" y="111" font-size="34" text-anchor="middle">${cardC}</text>
+
+      <!-- Arrow 2 -->
+      <text x="195" y="109" font-size="24" fill="${C.primaryLight || '#9880FF'}" font-weight="bold" class="anim-pulse">➔</text>
+
+      <!-- Row 2: Target Box D (Dashed Animated Glow) -->
+      <rect x="225" y="74" width="105" height="52" rx="12" fill="#ECFEFF" stroke="#06B6D4" stroke-width="3" stroke-dasharray="6,6" class="anim-glow"/>
+      <text x="277" y="113" font-size="36" font-weight="bold" fill="#0891B2" text-anchor="middle" class="anim-pulse">?</text>
+    </g>
+  `;
 }
 
 // Colors palette
@@ -349,6 +377,92 @@ const patternsQuestions = [
     correctOptionId: 'a',
     hint: 'Multiply each number by 3: 54 × 3 = ?',
     explanation: 'Geometric sequence where ratio is 3: 54 × 3 = 162!'
+  },
+
+  // ── Analogical Transformation Puzzles (LogicLike Reference Style) ──
+  {
+    id: 'pat-3-010', category: 'patterns', ageGroup: '3-4', difficulty: 1,
+    questionText: 'Look at how the egg opens. What happens to the banana?',
+    questionSVG: questionSvg(matrix2x2('🥚', '🍳', '🍌')),
+    options: [
+      { id: 'a', svg: optionSvg(`<text x="15" y="58" font-size="52">🍌</text>`), label: 'Peeled Banana' },
+      { id: 'b', svg: optionSvg(`<text x="15" y="58" font-size="52">🍬</text>`), label: 'Candy' },
+      { id: 'c', svg: optionSvg(`<text x="15" y="58" font-size="52">🍏</text>`), label: 'Apple Core' },
+      { id: 'd', svg: optionSvg(`<text x="15" y="58" font-size="52">🍉</text>`), label: 'Watermelon Slice' }
+    ],
+    correctOptionId: 'a',
+    hint: 'An egg is cracked open, so a banana gets peeled open!',
+    explanation: 'Egg opens into cracked shells, just like a banana is peeled to eat! 🍌'
+  },
+  {
+    id: 'pat-3-011', category: 'patterns', ageGroup: '3-4', difficulty: 1,
+    questionText: 'Whole apple turns into a core. What does a whole watermelon turn into?',
+    questionSVG: questionSvg(matrix2x2('🍎', '🍏', '🍉')),
+    options: [
+      { id: 'a', svg: optionSvg(`<text x="15" y="58" font-size="52">🍉</text>`), label: 'Watermelon Slice' },
+      { id: 'b', svg: optionSvg(`<text x="15" y="58" font-size="52">🧁</text>`), label: 'Cupcake' },
+      { id: 'c', svg: optionSvg(`<text x="15" y="58" font-size="52">🥕</text>`), label: 'Carrot' },
+      { id: 'd', svg: optionSvg(`<text x="15" y="58" font-size="52">🍞</text>`), label: 'Bread' }
+    ],
+    correctOptionId: 'a',
+    hint: 'Eating an apple leaves a core; slicing a watermelon makes a slice!',
+    explanation: 'A whole watermelon is sliced into fresh juicy watermelon slices! 🍉'
+  },
+  {
+    id: 'pat-5-010', category: 'patterns', ageGroup: '5-6', difficulty: 1,
+    questionText: 'A caterpillar grows into a butterfly. What does a tadpole grow into?',
+    questionSVG: questionSvg(matrix2x2('🐛', '🦋', '🐟')),
+    options: [
+      { id: 'a', svg: optionSvg(`<text x="15" y="58" font-size="52">🐸</text>`), label: 'Green Frog' },
+      { id: 'b', svg: optionSvg(`<text x="15" y="58" font-size="52">🦅</text>`), label: 'Eagle' },
+      { id: 'c', svg: optionSvg(`<text x="15" y="58" font-size="52">🦁</text>`), label: 'Lion' },
+      { id: 'd', svg: optionSvg(`<text x="15" y="58" font-size="52">🐝</text>`), label: 'Bee' }
+    ],
+    correctOptionId: 'a',
+    hint: 'Caterpillar transforms into butterfly; tadpole transforms into...?',
+    explanation: 'Tadpoles grow legs and turn into hopping green frogs! 🐸'
+  },
+  {
+    id: 'pat-5-011', category: 'patterns', ageGroup: '5-6', difficulty: 2,
+    questionText: 'A little seed grows into a mighty tree. What does a sunflower seed grow into?',
+    questionSVG: questionSvg(matrix2x2('🌱', '🌳', '🌰')),
+    options: [
+      { id: 'a', svg: optionSvg(`<text x="15" y="58" font-size="52">🌻</text>`), label: 'Sunflower' },
+      { id: 'b', svg: optionSvg(`<text x="15" y="58" font-size="52">🍄</text>`), label: 'Mushroom' },
+      { id: 'c', svg: optionSvg(`<text x="15" y="58" font-size="52">🌵</text>`), label: 'Cactus' },
+      { id: 'd', svg: optionSvg(`<text x="15" y="58" font-size="52">🪨</text>`), label: 'Stone' }
+    ],
+    correctOptionId: 'a',
+    hint: 'Sunflower seeds grow into tall yellow sunflowers!',
+    explanation: 'Sunflower seeds blossom into bright blooming sunflowers! 🌻'
+  },
+  {
+    id: 'pat-7-010', category: 'patterns', ageGroup: '7-8', difficulty: 2,
+    questionText: 'Yarn is knitted into a scarf. What are wooden planks crafted into?',
+    questionSVG: questionSvg(matrix2x2('🧶', '🧣', '🪵')),
+    options: [
+      { id: 'a', svg: optionSvg(`<text x="15" y="58" font-size="52">🪑</text>`), label: 'Wooden Chair' },
+      { id: 'b', svg: optionSvg(`<text x="15" y="58" font-size="52">📱</text>`), label: 'Smartphone' },
+      { id: 'c', svg: optionSvg(`<text x="15" y="58" font-size="52">🚲</text>`), label: 'Bicycle' },
+      { id: 'd', svg: optionSvg(`<text x="15" y="58" font-size="52">💎</text>`), label: 'Diamond' }
+    ],
+    correctOptionId: 'a',
+    hint: 'Yarn makes clothing; wood makes furniture!',
+    explanation: 'Wood planks are built into sturdy wooden chairs and furniture! 🪑'
+  },
+  {
+    id: 'pat-9-010', category: 'patterns', ageGroup: '9+', difficulty: 2,
+    questionText: 'Ice cube melts into water. What does a burning candle melt into?',
+    questionSVG: questionSvg(matrix2x2('🧊', '💧', '🕯️')),
+    options: [
+      { id: 'a', svg: optionSvg(`<text x="15" y="58" font-size="52">🪔</text>`), label: 'Melted Wax' },
+      { id: 'b', svg: optionSvg(`<text x="15" y="58" font-size="52">🪨</text>`), label: 'Hard Rock' },
+      { id: 'c', svg: optionSvg(`<text x="15" y="58" font-size="52">⚡</text>`), label: 'Lightning' },
+      { id: 'd', svg: optionSvg(`<text x="15" y="58" font-size="52">❄️</text>`), label: 'Snowflake' }
+    ],
+    correctOptionId: 'a',
+    hint: 'State change: Solid heated becomes liquid wax!',
+    explanation: 'Solid wax melts under heat into liquid melted wax! 🕯️'
   }
 ];
 
@@ -1413,30 +1527,53 @@ export const ALL_QUESTIONS = [
  * Get questions filtered by category and age group.
  * @param {string} category - Category key
  * @param {string} ageGroup - Age group string ('3-4', '5-6', '7-8', '9+')
- * @param {number} [difficulty] - Max difficulty level (1-3). If given, only questions with difficulty <= this value.
+ * @param {number} [difficulty=3] - Target difficulty level (1-3)
+ * @param {boolean} [exactDifficulty=false] - If true, only matches exact difficulty
  * @returns {Array} Filtered questions
  */
-export function getQuestions(category, ageGroup, difficulty = 3) {
+export function getQuestions(category, ageGroup, difficulty = 3, exactDifficulty = false) {
   return ALL_QUESTIONS.filter(q =>
     q.category === category &&
     q.ageGroup === ageGroup &&
-    q.difficulty <= difficulty
+    (exactDifficulty ? q.difficulty === difficulty : q.difficulty <= difficulty)
   );
 }
 
 /**
+ * Generate a deterministic signature for any question
+ * @param {Object} q
+ * @returns {string}
+ */
+export function getQuestionSignature(q) {
+  if (!q) return '';
+  if (q.signature) return q.signature;
+  const correctOpt = (q.options || []).find(o => o.id === q.correctOptionId);
+  const correctText = correctOpt?.label || correctOpt?.id || '';
+  return `static:${q.category}:${q.ageGroup}:${q.id}:${q.questionText}:${correctText}`;
+}
+
+// Ensure all static questions have their signatures initialized
+ALL_QUESTIONS.forEach(q => {
+  if (!q.signature) {
+    q.signature = getQuestionSignature(q);
+  }
+});
+
+/**
  * Prepare a question for gameplay:
  * 1. Deep clones the question object
- * 2. Shuffles the options dynamically so the correct answer isn't always in position 'a'
- * 3. Re-maps option IDs to standard 'a', 'b', 'c', 'd'
- * 4. Updates correctOptionId to match the new location
- * 5. Caches in runtime cache for error/mistake lookup
+ * 2. Preserves signature and category metadata
+ * 3. Shuffles the options dynamically so the correct answer isn't always in position 'a'
+ * 4. Re-maps option IDs to standard 'a', 'b', 'c', 'd'
+ * 5. Updates correctOptionId to match the new location
+ * 6. Caches in runtime cache for error/mistake lookup
  * @param {Object} rawQuestion
  * @returns {Object}
  */
 export function prepareQuestionForPlay(rawQuestion) {
   if (!rawQuestion) return null;
   const q = { ...rawQuestion };
+  q.signature = rawQuestion.signature || getQuestionSignature(rawQuestion);
   const originalCorrectId = rawQuestion.correctOptionId;
 
   // Mark which option was originally correct
@@ -1473,63 +1610,82 @@ export function prepareQuestionForPlay(rawQuestion) {
 }
 
 /**
- * Get a smart, non-repeating set of questions for a game level.
- * Features:
- * - Prioritizes unseen questions from child's history cooldown
- * - Supplements with procedural generation so questions never run out
- * - Shuffles and remaps options uniformly
+ * Get a strictly non-repeating set of questions for a single user profile.
+ * - Prioritizes unseen curated static questions for the category and difficulty
+ * - When static questions are exhausted, dynamically generates unique procedural puzzles
+ * - Deduplicates against all seen question IDs and semantic signatures
  * @param {string} category
  * @param {string} ageGroup
- * @param {number} level - Level number (affects difficulty filtering)
+ * @param {number} level - Level number (affects default difficulty)
  * @param {number} [count=5] - Number of questions to return
- * @returns {Array} Shuffled, prepared questions
+ * @param {number} [difficulty=null] - Optional difficulty override (1-3)
+ * @returns {Array} Shuffled, prepared, non-repeating questions
  */
 export function getQuestionsForLevel(category, ageGroup, level = 1, count = 5, difficulty = null) {
   const targetDifficulty = (difficulty !== null && difficulty !== undefined) ? Number(difficulty) : Math.min(level, 3);
   const seenIds = getSeenQuestions() || [];
+  const seenSignatures = getSeenSignatures() || [];
 
-  // 1. Get exact matching static questions for category + ageGroup + difficulty
-  const staticMatches = getQuestions(category, ageGroup, targetDifficulty);
+  // 1. First attempt: match exact difficulty static questions
+  let staticMatches = getQuestions(category, ageGroup, targetDifficulty, true);
+  let unseenStatic = staticMatches.filter(q => {
+    const sig = q.signature || getQuestionSignature(q);
+    return !seenIds.includes(q.id) && !seenSignatures.includes(sig);
+  });
 
-  // 2. Filter out questions already seen recently
-  let unseenStatic = staticMatches.filter(q => !seenIds.includes(q.id));
-
-  // If all static questions have been seen, refresh from full pool
-  if (unseenStatic.length === 0) {
-    unseenStatic = [...staticMatches];
+  // If not enough exact difficulty, add remaining difficulties within range
+  if (unseenStatic.length < count) {
+    const fallbackStatic = getQuestions(category, ageGroup, targetDifficulty, false).filter(q => {
+      const sig = q.signature || getQuestionSignature(q);
+      return !seenIds.includes(q.id) && !seenSignatures.includes(sig) && !unseenStatic.some(uq => uq.id === q.id);
+    });
+    unseenStatic = [...unseenStatic, ...fallbackStatic];
   }
 
-  // Shuffle candidate static questions
+  // Shuffle available unseen static questions
   const shuffledStatic = [...unseenStatic];
   for (let i = shuffledStatic.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffledStatic[i], shuffledStatic[j]] = [shuffledStatic[j], shuffledStatic[i]];
   }
 
-  // Pick static questions (take up to half of count, leaving room for procedural questions)
+  // Pick from unseen static questions first
   const selectedQuestions = [];
-  const staticTarget = Math.min(shuffledStatic.length, Math.max(1, Math.floor(count / 2)));
-  for (let i = 0; i < staticTarget; i++) {
+  for (let i = 0; i < shuffledStatic.length && selectedQuestions.length < count; i++) {
     selectedQuestions.push(shuffledStatic[i]);
   }
 
-  // 3. Supplement remaining with fresh procedural questions at target difficulty
+  // 3. Fill remaining required count with fresh procedural questions (never repeating)
+  const currentLevelSignatures = new Set([
+    ...seenSignatures,
+    ...selectedQuestions.map(q => q.signature || getQuestionSignature(q))
+  ]);
+
   let genAttempts = 0;
-  while (selectedQuestions.length < count && genAttempts < 20) {
+  while (selectedQuestions.length < count && genAttempts < 60) {
     genAttempts++;
-    const generated = generateProceduralQuestion(category, ageGroup, targetDifficulty);
-    if (generated && !selectedQuestions.some(sq => sq.id === generated.id)) {
-      selectedQuestions.push(generated);
+    const generated = generateProceduralQuestion(
+      category,
+      ageGroup,
+      targetDifficulty,
+      Array.from(currentLevelSignatures)
+    );
+    if (generated) {
+      const genSig = generated.signature || generated.id;
+      if (!currentLevelSignatures.has(genSig) && !selectedQuestions.some(sq => sq.id === generated.id)) {
+        selectedQuestions.push(generated);
+        currentLevelSignatures.add(genSig);
+      }
     }
   }
 
-  // 4. If STILL short, supplement from other age groups in this category
+  // 4. In the rare case procedural attempts need fallback, generate without strict seen constraint
+  // but ensure no duplicates within this specific level
   if (selectedQuestions.length < count) {
-    const fallbackPool = ALL_QUESTIONS.filter(q => q.category === category && q.difficulty <= targetDifficulty);
-    for (const fb of fallbackPool) {
-      if (selectedQuestions.length >= count) break;
-      if (!selectedQuestions.some(sq => sq.id === fb.id)) {
-        selectedQuestions.push(fb);
+    while (selectedQuestions.length < count) {
+      const fallback = generateProceduralQuestion(category, ageGroup, targetDifficulty, []);
+      if (!selectedQuestions.some(sq => sq.id === fallback.id)) {
+        selectedQuestions.push(fallback);
       }
     }
   }
@@ -1571,4 +1727,5 @@ export function getAvailableCategories(ageGroup) {
 export function getTotalQuestionCount() {
   return ALL_QUESTIONS.length;
 }
+
 

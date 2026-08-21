@@ -76,8 +76,11 @@ export function startGame(category, level = null, difficulty = null) {
     return;
   }
 
-  // Mark questions as seen to maintain cooldown history
-  markQuestionsAsSeen(questions.map(q => q.id));
+  // Mark questions and semantic signatures as seen to prevent repeats for this profile
+  markQuestionsAsSeen(
+    questions.map(q => q.id),
+    questions.map(q => q.signature || q.id)
+  );
 
   // Initialize game session in state
   resetGameSession();
@@ -330,6 +333,46 @@ function narrateQuestion(text) {
 }
 
 /**
+ * Spawn celebratory radial sparkle particles around the tapped element
+ */
+function spawnSparkleBurst(element) {
+  if (!element) return;
+  const rect = element.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const particles = ['✨', '⭐', '🌟', '🎉', '🐣', '🎈', '💖', '🍭', '🧸', '🌈', '🚀', '🐾', '🎀', '🌸', '💫'];
+  const count = 16;
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'sparkle-particle';
+    p.textContent = particles[Math.floor(Math.random() * particles.length)];
+    p.style.left = `${centerX}px`;
+    p.style.top = `${centerY}px`;
+
+    const angle = (i / count) * 2 * Math.PI + (Math.random() * 0.4 - 0.2);
+    const dist = 60 + Math.random() * 80;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist - 35; // upward celebratory bias
+
+    p.style.setProperty('--tx', `${tx}px`);
+    p.style.setProperty('--ty', `${ty}px`);
+    p.style.animationDuration = `${0.7 + Math.random() * 0.3}s`;
+
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+  }
+
+  // Animate mascot in cheering pose
+  const mascot = document.querySelector('.mascot-avatar') || document.getElementById('mascot-avatar');
+  if (mascot) {
+    mascot.classList.remove('mascot-cheering');
+    void mascot.offsetWidth; // trigger reflow
+    mascot.classList.add('mascot-cheering');
+  }
+}
+
+/**
  * Handle selection of an answer option
  */
 function handleOptionSelect(tile, question) {
@@ -348,8 +391,9 @@ function handleOptionSelect(tile, question) {
     isCurrentQuestionResolved = true;
     speechService.stop();
 
-    // Mark active tile as correct
+    // Mark active tile as correct & burst joyful particles
     tile.classList.add('correct');
+    spawnSparkleBurst(tile);
 
     // Dim other non-selected tiles
     allTiles.forEach(t => {

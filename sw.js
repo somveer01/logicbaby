@@ -3,7 +3,7 @@
 // Caches core application assets and serves them offline
 // ==========================================================================
 
-const CACHE_NAME = 'logicbaby-v1';
+const CACHE_NAME = 'logicbaby-v2';
 
 const STATIC_ASSETS = [
   './',
@@ -22,6 +22,7 @@ const STATIC_ASSETS = [
   './js/views/topbar.js',
   './js/views/dashboard.js',
   './js/views/gameArena.js',
+  './js/views/homeworkHub.js',
   './js/views/celebration.js',
   './js/views/parentDashboard.js',
   './js/views/ageSelector.js',
@@ -55,14 +56,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Navigation & asset requests: Cache first, fallback to network
+  // Network first, fallback to cache (ensures updates are immediate while preserving offline PWA capability)
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
-      return fetch(event.request).then((response) => {
-        // Cache successful GET responses from local origin
+    fetch(event.request)
+      .then((response) => {
         if (response && response.status === 200 && event.request.method === 'GET') {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -70,12 +67,14 @@ self.addEventListener('fetch', (event) => {
           });
         }
         return response;
-      }).catch(() => {
-        // Fallback to index.html if navigating offline
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      });
-    })
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cached) => {
+          if (cached) return cached;
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+        });
+      })
   );
 });

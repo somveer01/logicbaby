@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>LogicBaby — Fun Logic Puzzles for Kids</title>
   <meta name="description" content="Age-based visual logic reasoning puzzles for toddlers, preschoolers, and kids. Practice patterns, shapes, odd one out, and math logic with voice narration & cheerful sounds!">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   
   <!-- PWA & Mobile Meta -->
   <meta name="theme-color" content="#6C3FB5">
@@ -14,13 +17,14 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   
-  <!-- Fonts: Fredoka (headings) + Nunito (body) -->
+  <!-- Fonts: Fredoka (headings) + Nunito (body) with display=swap for zero render delay -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Canvas Confetti for celebrations -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- Canvas Confetti for celebrations (deferred) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  
   
   <!-- Design System -->
   <link rel="stylesheet" href="css/main.css">

@@ -1,0 +1,17 @@
+# Node & Environment
+node_modules/
+.npm/
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Flutter / Android build
+.dart_tool/
+.packages
+build/
+*.apk
+*.aab

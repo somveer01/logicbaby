@@ -83,6 +83,35 @@ function optionSvg(content) {
   return svgWrap(80, 80, content);
 }
 
+function numberOptionSvg(val, color = C.purple) {
+  const str = String(val);
+  let fontSize = 42;
+  if (str.length >= 5) fontSize = 22;
+  else if (str.length === 4) fontSize = 26;
+  else if (str.length === 3) fontSize = 32;
+  else if (str.length === 2) fontSize = 38;
+  else fontSize = 44;
+
+  return optionSvg(`<text x="40" y="49" font-size="${fontSize}" font-weight="bold" fill="${color}" text-anchor="middle" dominant-baseline="central">${str}</text>`);
+}
+
+function renderSequenceCardSvg(seq, nextValColor = C.rose, cardColor = C.purple) {
+  const seqStr = seq.join(', ');
+  let fontSize = 36;
+  if (seqStr.length > 25) fontSize = 22;
+  else if (seqStr.length > 20) fontSize = 26;
+  else if (seqStr.length > 15) fontSize = 30;
+
+  return questionSvg(`
+    <g class="anim-float">
+      <rect x="20" y="22" width="360" height="88" rx="18" fill="${cardColor}15" stroke="${cardColor}" stroke-width="2.5"/>
+      <text x="200" y="70" font-size="${fontSize}" font-weight="bold" fill="${cardColor}" text-anchor="middle" dominant-baseline="central">
+        ${seqStr}, <tspan fill="${nextValColor}">?</tspan>
+      </text>
+    </g>
+  `, 400, 130);
+}
+
 function questionSvg(content, w = 400, h = 140) {
   return svgWrap(w, h, content);
 }
@@ -194,10 +223,10 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `How many ${theme.name} ${theme.emoji} do you see?`,
         questionSVG: questionSvg(items.join(' '), 380, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${color.hex}">${count}</text>`), label: String(count) },
-          { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${color.hex}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${color.hex}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${color.hex}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(count, color.hex), label: String(count) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Touch and count each ${theme.emoji} one by one!`,
@@ -215,14 +244,14 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionSVG: questionSvg(`
           <g class="anim-float">
             <rect x="150" y="20" width="100" height="90" rx="16" fill="#EDE9FE" stroke="${C.purple}" stroke-width="3"/>
-            <text x="180" y="80" font-size="48" font-weight="bold" fill="${C.purple}">${dots}</text>
+            <text x="200" y="72" font-size="48" font-weight="bold" fill="${C.purple}" text-anchor="middle" dominant-baseline="central">${dots}</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.purple}">${dots}</text>`), label: String(dots) },
-          { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.purple}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.purple}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.purple}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(dots, C.purple), label: String(dots) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.purple), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.purple), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.purple), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Count the dots!`,
@@ -252,10 +281,10 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
           <text x="${220 + b * 28}" y="76" font-size="34" font-weight="bold" fill="${C.darkGray}"> = ❓</text>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="26" y="58" font-size="48" font-weight="bold" fill="${color.hex}">${sum}</text>`), label: String(sum) },
-          { id: 'b', svg: optionSvg(`<text x="26" y="58" font-size="48" font-weight="bold" fill="${color.hex}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="26" y="58" font-size="48" font-weight="bold" fill="${color.hex}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="26" y="58" font-size="48" font-weight="bold" fill="${color.hex}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(sum, color.hex), label: String(sum) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Add both groups together!`,
@@ -265,7 +294,7 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
   } else if (ageGroup === '5-6') {
     const model = (difficulty === 1) 
       ? pickOne(['add', 'sub', 'shape-corners'])
-      : pickOne(['add', 'sub', 'missing-add', 'triple-add', 'shape-corners']);
+      : pickOne(['add', 'sub', 'missing-add', 'triple-add', 'shape-corners', 'skip-count']);
 
     if (model === 'add') {
       const maxA = (difficulty === 1) ? 6 : (difficulty === 2 ? 10 : 14);
@@ -282,15 +311,15 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `Solve the addition puzzle: ${a} + ${b} = ?`,
         questionSVG: questionSvg(`
           <g class="anim-float">
-            <rect x="30" y="30" width="340" height="75" rx="16" fill="${color.hex}18" stroke="${color.hex}" stroke-width="2"/>
-            <text x="75" y="82" font-size="46" font-weight="bold" fill="${color.hex}">${a} + ${b} = ❓</text>
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="${color.hex}18" stroke="${color.hex}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="44" font-weight="bold" fill="${color.hex}" text-anchor="middle" dominant-baseline="central">${a} + ${b} = ❓</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${color.hex}">${sum}</text>`), label: String(sum) },
-          { id: 'b', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${color.hex}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${color.hex}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${color.hex}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(sum, color.hex), label: String(sum) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Start at ${a} and count forward ${b} more!`,
@@ -310,15 +339,15 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `You have ${sum} ${theme.name} ${theme.emoji} and give ${b} to friends. How many are left?`,
         questionSVG: questionSvg(`
           <g class="anim-pulse">
-            <rect x="40" y="25" width="320" height="85" rx="18" fill="#FCE7F3" stroke="${C.pink}" stroke-width="2"/>
-            <text x="65" y="80" font-size="44" font-weight="bold" fill="${C.pink}">${sum} - ${b} = ❓</text>
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="#FCE7F3" stroke="${C.pink}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="44" font-weight="bold" fill="${C.pink}" text-anchor="middle" dominant-baseline="central">${sum} - ${b} = ❓</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.pink}">${diff}</text>`), label: String(diff) },
-          { id: 'b', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.pink}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.pink}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.pink}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(diff, C.pink), label: String(diff) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.pink), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.pink), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.pink), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Count backwards ${b} steps from ${sum}!`,
@@ -338,15 +367,15 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `What missing number completes the equation? ${a} + ❓ = ${total}`,
         questionSVG: questionSvg(`
           <g class="anim-float">
-            <rect x="30" y="30" width="340" height="75" rx="16" fill="#DCFCE7" stroke="${C.green}" stroke-width="2"/>
-            <text x="65" y="82" font-size="42" font-weight="bold" fill="${C.green}">${a} + ❓ = ${total}</text>
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="#DCFCE7" stroke="${C.green}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="42" font-weight="bold" fill="${C.green}" text-anchor="middle" dominant-baseline="central">${a} + ❓ = ${total}</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.green}">${missing}</text>`), label: String(missing) },
-          { id: 'b', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.green}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.green}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.green}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(missing, C.green), label: String(missing) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.green), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.green), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.green), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `How many more to go from ${a} up to ${total}?`,
@@ -366,19 +395,44 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `Add all three numbers: ${a} + ${b} + ${c} = ?`,
         questionSVG: questionSvg(`
           <g class="anim-float">
-            <rect x="30" y="30" width="340" height="75" rx="16" fill="#EDE9FE" stroke="${C.purple}" stroke-width="2"/>
-            <text x="60" y="82" font-size="40" font-weight="bold" fill="${C.purple}">${a} + ${b} + ${c} = ❓</text>
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="#EDE9FE" stroke="${C.purple}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="40" font-weight="bold" fill="${C.purple}" text-anchor="middle" dominant-baseline="central">${a} + ${b} + ${c} = ❓</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.purple}">${sum}</text>`), label: String(sum) },
-          { id: 'b', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.purple}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.purple}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.purple}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(sum, C.purple), label: String(sum) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.purple), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.purple), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.purple), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `First add ${a} + ${b}, then add ${c}!`,
         explanation: `${a} + ${b} + ${c} = ${sum}! 🚀`
+      };
+    } else if (model === 'skip-count') {
+      const step = pickOne([2, 5, 10]);
+      const count = 4;
+      const start = step * randInt(1, 4);
+      const seq = [];
+      for (let i = 0; i < count; i++) seq.push(start + i * step);
+      const nextVal = start + count * step;
+      const signature = `math:5-6:d${difficulty}:skipcount:${start}+${step}:${nextVal}`;
+      const id = `gen-math-5-6-d${difficulty}-skip-${start}-${step}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 1);
+
+      return {
+        id, signature, category: 'math', ageGroup, difficulty,
+        questionText: `Counting by ${step}s: What comes next?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, C.blue),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, C.blue), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.blue), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.blue), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.blue), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Keep counting up by ${step}!`,
+        explanation: `${seq[seq.length - 1]} + ${step} = ${nextVal}! Excellent counting! 🎯`
       };
     } else {
       // Shape corners
@@ -398,14 +452,14 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `How many total corners do ${qty} ${shapeType.name} have?`,
         questionSVG: questionSvg(`
           <g class="anim-float">
-            <text x="80" y="80" font-size="44">${shapeType.emoji.repeat(qty)}</text>
+            <text x="200" y="70" font-size="44" text-anchor="middle" dominant-baseline="central">${shapeType.emoji.repeat(qty)}</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.indigo}">${totalCorners}</text>`), label: String(totalCorners) },
-          { id: 'b', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.indigo}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.indigo}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.indigo}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(totalCorners, C.indigo), label: String(totalCorners) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.indigo), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.indigo), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.indigo), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Each ${shapeType.name.slice(0, -1)} has ${shapeType.corners} corners. Count them all!`,
@@ -413,7 +467,7 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
       };
     }
   } else if (ageGroup === '7-8') {
-    const model = pickOne(['mult', 'div', 'scale-bal', 'double-half']);
+    const model = pickOne(['mult', 'div', 'scale-bal', 'double-half', 'mult-wheel', 'fact-triangle']);
 
     if (model === 'mult') {
       const a = randInt(2, 12);
@@ -428,15 +482,15 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `What is ${a} × ${b}?`,
         questionSVG: questionSvg(`
           <g class="anim-float">
-            <rect x="40" y="25" width="320" height="85" rx="16" fill="#EDE9FE" stroke="${C.purple}" stroke-width="2"/>
-            <text x="75" y="80" font-size="48" font-weight="bold" fill="${C.purple}">${a} × ${b} = ❓</text>
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="#EDE9FE" stroke="${C.purple}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="44" font-weight="bold" fill="${C.purple}" text-anchor="middle" dominant-baseline="central">${a} × ${b} = ❓</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.purple}">${prod}</text>`), label: String(prod) },
-          { id: 'b', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.purple}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.purple}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.purple}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(prod, C.purple), label: String(prod) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.purple), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.purple), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.purple), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Think: ${b} groups of ${a}!`,
@@ -444,7 +498,7 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
       };
     } else if (model === 'div') {
       const divisor = randInt(2, 9);
-      const quotient = randInt(2, 10);
+      const quotient = randInt(2, 12);
       const dividend = divisor * quotient;
       const signature = `math:7-8:d${difficulty}:div:${dividend}/${divisor}:${quotient}`;
       const id = `gen-math-7-8-d${difficulty}-div-${dividend}-${divisor}-${uid}`;
@@ -455,19 +509,125 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `Share ${dividend} gems equally among ${divisor} treasure chests: ${dividend} ÷ ${divisor} = ?`,
         questionSVG: questionSvg(`
           <g class="anim-float">
-            <rect x="40" y="25" width="320" height="85" rx="16" fill="#FEF3C7" stroke="${C.amber}" stroke-width="2"/>
-            <text x="75" y="80" font-size="48" font-weight="bold" fill="${C.amber}">${dividend} ÷ ${divisor} = ❓</text>
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="#FEF3C7" stroke="${C.amber}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="44" font-weight="bold" fill="${C.amber}" text-anchor="middle" dominant-baseline="central">${dividend} ÷ ${divisor} = ❓</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.amber}">${quotient}</text>`), label: String(quotient) },
-          { id: 'b', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.amber}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.amber}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${C.amber}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(quotient, C.amber), label: String(quotient) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.amber), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.amber), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.amber), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `How many times does ${divisor} fit into ${dividend}?`,
         explanation: `${dividend} ÷ ${divisor} = ${quotient}! 💎`
+      };
+    } else if (model === 'mult-wheel') {
+      // Multiplication Flower / Petal Puzzle
+      const factor = pickOne([3, 4, 5, 6, 7, 8, 9]);
+      const petalA = randInt(2, 5);
+      const targetPetal = randInt(3, 8);
+      const prod = targetPetal * factor;
+      const signature = `math:7-8:d${difficulty}:wheel:${factor}x${targetPetal}:${prod}`;
+      const id = `gen-math-7-8-d${difficulty}-wheel-${factor}-${targetPetal}-${uid}`;
+      const wrongNums = generateNumberDistractors(prod, 3, factor);
+
+      return {
+        id, signature, category: 'math', ageGroup, difficulty,
+        questionText: `Multiply by the center number (×${factor})! What replaces the ❓?`,
+        questionSVG: questionSvg(`
+          <g class="anim-float">
+            <!-- Center Node -->
+            <circle cx="200" cy="65" r="32" fill="#EDE9FE" stroke="${C.purple}" stroke-width="3"/>
+            <text x="200" y="66" font-size="24" font-weight="bold" fill="${C.purple}" text-anchor="middle" dominant-baseline="central">× ${factor}</text>
+            <!-- Left Petal: petalA -->
+            <rect x="40" y="40" width="90" height="50" rx="12" fill="#F0FDF4" stroke="${C.green}" stroke-width="2"/>
+            <text x="85" y="65" font-size="18" font-weight="bold" fill="${C.green}" text-anchor="middle" dominant-baseline="central">${petalA} ➔ ${petalA * factor}</text>
+            <!-- Right Petal: Target -->
+            <rect x="270" y="40" width="90" height="50" rx="12" fill="#FFF1F2" stroke="${C.rose}" stroke-width="2"/>
+            <text x="315" y="65" font-size="18" font-weight="bold" fill="${C.rose}" text-anchor="middle" dominant-baseline="central">${targetPetal} ➔ ❓</text>
+          </g>
+        `, 400, 130),
+        options: [
+          { id: 'a', svg: numberOptionSvg(prod, C.rose), label: String(prod) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.rose), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.rose), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.rose), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Multiply ${targetPetal} by the center number ${factor}!`,
+        explanation: `${targetPetal} × ${factor} = ${prod}! Fantastic multiplication! 🌸`
+      };
+    } else if (model === 'fact-triangle') {
+      // Multiplication fact family triangle
+      const a = randInt(3, 9);
+      const b = randInt(3, 12);
+      const prod = a * b;
+      const signature = `math:7-8:d${difficulty}:facttri:${a}x${b}:${prod}`;
+      const id = `gen-math-7-8-d${difficulty}-facttri-${a}-${b}-${uid}`;
+      const wrongNums = generateNumberDistractors(prod, 3, 4);
+
+      return {
+        id, signature, category: 'math', ageGroup, difficulty,
+        questionText: `Math Triangle: Top number is the product of the bottom two numbers. Find ❓!`,
+        questionSVG: questionSvg(`
+          <g class="anim-float">
+            <!-- Triangle Outline -->
+            <polygon points="200,18 100,105 300,105" fill="#FEF3C7" stroke="${C.amber}" stroke-width="3" stroke-linejoin="round"/>
+            <!-- Top Product Circle -->
+            <circle cx="200" cy="35" r="22" fill="white" stroke="${C.amber}" stroke-width="2.5"/>
+            <text x="200" y="36" font-size="22" font-weight="bold" fill="${C.rose}" text-anchor="middle" dominant-baseline="central">❓</text>
+            <!-- Bottom Left Circle -->
+            <circle cx="125" cy="95" r="20" fill="white" stroke="${C.amber}" stroke-width="2.5"/>
+            <text x="125" y="96" font-size="18" font-weight="bold" fill="${C.amber}" text-anchor="middle" dominant-baseline="central">${a}</text>
+            <!-- Bottom Right Circle -->
+            <circle cx="275" cy="95" r="20" fill="white" stroke="${C.amber}" stroke-width="2.5"/>
+            <text x="275" y="96" font-size="18" font-weight="bold" fill="${C.amber}" text-anchor="middle" dominant-baseline="central">${b}</text>
+            <!-- Center Multiply Sign -->
+            <text x="200" y="78" font-size="26" font-weight="bold" fill="${C.darkGray}" text-anchor="middle">×</text>
+          </g>
+        `, 400, 130),
+        options: [
+          { id: 'a', svg: numberOptionSvg(prod, C.amber), label: String(prod) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.amber), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.amber), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.amber), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Multiply the two bottom numbers (${a} × ${b})!`,
+        explanation: `${a} × ${b} = ${prod}! The top of the fact triangle is ${prod}! 📐`
+      };
+    } else if (model === 'double-half') {
+      const isDouble = Math.random() > 0.5;
+      const base = pickOne([15, 20, 25, 30, 35, 40, 45, 50, 75, 100, 125, 150]);
+      const answer = isDouble ? base * 2 : base;
+      const questionNum = isDouble ? base : base * 2;
+      const promptText = isDouble ? `What is DOUBLE of ${questionNum}?` : `What is HALF of ${questionNum}?`;
+      const signature = `math:7-8:d${difficulty}:${isDouble ? 'double' : 'half'}:${questionNum}:${answer}`;
+      const id = `gen-math-7-8-d${difficulty}-dh-${isDouble ? 'dbl' : 'hlf'}-${questionNum}-${uid}`;
+      const wrongNums = generateNumberDistractors(answer, 3, 2);
+
+      return {
+        id, signature, category: 'math', ageGroup, difficulty,
+        questionText: promptText,
+        questionSVG: questionSvg(`
+          <g class="anim-pulse">
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="${isDouble ? '#F0F9FF' : '#FEF3C7'}" stroke="${isDouble ? C.blue : C.amber}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="44" font-weight="bold" fill="${isDouble ? C.blue : C.amber}" text-anchor="middle" dominant-baseline="central">
+              ${isDouble ? `${questionNum} × 2 = ❓` : `${questionNum} ÷ 2 = ❓`}
+            </text>
+          </g>
+        `, 400, 130),
+        options: [
+          { id: 'a', svg: numberOptionSvg(answer, C.blue), label: String(answer) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.blue), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.blue), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.blue), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: isDouble ? `Add ${questionNum} to itself!` : `Divide ${questionNum} by 2!`,
+        explanation: isDouble ? `Double of ${questionNum} is ${answer}! ⚡` : `Half of ${questionNum} is ${answer}! ✂️`
       };
     } else {
       const a = randInt(14, 85);
@@ -485,16 +645,16 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
             <rect x="60" y="70" width="280" height="8" rx="4" fill="${C.darkGray}"/>
             <polygon points="200,70 185,110 215,110" fill="${C.gray}"/>
             <rect x="70" y="30" width="100" height="40" rx="8" fill="#DCFCE7" stroke="${C.green}" stroke-width="2"/>
-            <text x="80" y="58" font-size="20" font-weight="bold" fill="${C.green}">${a} + ❓</text>
+            <text x="120" y="52" font-size="20" font-weight="bold" fill="${C.green}" text-anchor="middle" dominant-baseline="central">${a} + ❓</text>
             <rect x="230" y="30" width="100" height="40" rx="8" fill="#DCFCE7" stroke="${C.green}" stroke-width="2"/>
-            <text x="255" y="58" font-size="22" font-weight="bold" fill="${C.green}">${total}</text>
+            <text x="280" y="52" font-size="22" font-weight="bold" fill="${C.green}" text-anchor="middle" dominant-baseline="central">${total}</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="18" y="56" font-size="42" font-weight="bold" fill="${C.green}">${missing}</text>`), label: String(missing) },
-          { id: 'b', svg: optionSvg(`<text x="18" y="56" font-size="42" font-weight="bold" fill="${C.green}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="18" y="56" font-size="42" font-weight="bold" fill="${C.green}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="18" y="56" font-size="42" font-weight="bold" fill="${C.green}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(missing, C.green), label: String(missing) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.green), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.green), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.green), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Subtract ${a} from ${total}!`,
@@ -503,9 +663,63 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
     }
   } else {
     // 9+
-    const model = pickOne(['frac', 'alg', 'order-ops']);
+    const model = pickOne(['frac', 'alg', 'mult-3digit', 'div-3digit', 'double-half']);
 
-    if (model === 'frac') {
+    if (model === 'mult-3digit') {
+      const a = pickOne([12, 13, 14, 15, 16, 18, 20, 25, 30, 50]);
+      const b = randInt(11, 20);
+      const prod = a * b;
+      const signature = `math:9+:d${difficulty}:mult3d:${a}x${b}:${prod}`;
+      const id = `gen-math-9-d${difficulty}-mult3d-${a}-${b}-${uid}`;
+      const wrongNums = generateNumberDistractors(prod, 3, 50);
+
+      return {
+        id, signature, category: 'math', ageGroup, difficulty,
+        questionText: `Solve the multi-digit multiplication: ${a} × ${b} = ?`,
+        questionSVG: questionSvg(`
+          <g class="anim-glow">
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="#EDE9FE" stroke="${C.purple}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="42" font-weight="bold" fill="${C.purple}" text-anchor="middle" dominant-baseline="central">${a} × ${b} = ❓</text>
+          </g>
+        `, 400, 130),
+        options: [
+          { id: 'a', svg: numberOptionSvg(prod, C.purple), label: String(prod) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.purple), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.purple), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.purple), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Break it down: ${a} × ${Math.floor(b / 10) * 10} + ${a} × ${b % 10}!`,
+        explanation: `${a} × ${b} = ${prod}! Masterful mental calculation! 🧠`
+      };
+    } else if (model === 'div-3digit') {
+      const quotient = randInt(15, 45);
+      const divisor = pickOne([4, 5, 6, 8, 10, 12, 15, 20]);
+      const dividend = quotient * divisor;
+      const signature = `math:9+:d${difficulty}:div3d:${dividend}/${divisor}:${quotient}`;
+      const id = `gen-math-9-d${difficulty}-div3d-${dividend}-${divisor}-${uid}`;
+      const wrongNums = generateNumberDistractors(quotient, 3, 5);
+
+      return {
+        id, signature, category: 'math', ageGroup, difficulty,
+        questionText: `Divide: ${dividend} ÷ ${divisor} = ?`,
+        questionSVG: questionSvg(`
+          <g class="anim-float">
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="#FEF3C7" stroke="${C.amber}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="42" font-weight="bold" fill="${C.amber}" text-anchor="middle" dominant-baseline="central">${dividend} ÷ ${divisor} = ❓</text>
+          </g>
+        `, 400, 130),
+        options: [
+          { id: 'a', svg: numberOptionSvg(quotient, C.amber), label: String(quotient) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.amber), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.amber), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.amber), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Think: how many times does ${divisor} go into ${dividend}?`,
+        explanation: `${dividend} ÷ ${divisor} = ${quotient}! (Since ${quotient} × ${divisor} = ${dividend})! 🎯`
+      };
+    } else if (model === 'frac') {
       const totalSlices = pickOne([3, 4, 5, 6, 8, 10, 12]);
       const shadedSlices = randInt(1, totalSlices - 1);
       const sliceAngle = 360 / totalSlices;
@@ -537,19 +751,50 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="14" y="56" font-size="36" font-weight="bold" fill="${C.indigo}">${fractionLabel}</text>`), label: fractionLabel },
-          { id: 'b', svg: optionSvg(`<text x="14" y="56" font-size="36" font-weight="bold" fill="${C.indigo}">${wrongOpts[0]}</text>`), label: wrongOpts[0] },
-          { id: 'c', svg: optionSvg(`<text x="14" y="56" font-size="36" font-weight="bold" fill="${C.indigo}">${wrongOpts[1]}</text>`), label: wrongOpts[1] },
-          { id: 'd', svg: optionSvg(`<text x="14" y="56" font-size="36" font-weight="bold" fill="${C.indigo}">${wrongOpts[2]}</text>`), label: wrongOpts[2] }
+          { id: 'a', svg: numberOptionSvg(fractionLabel, C.indigo), label: fractionLabel },
+          { id: 'b', svg: numberOptionSvg(wrongOpts[0], C.indigo), label: wrongOpts[0] },
+          { id: 'c', svg: numberOptionSvg(wrongOpts[1], C.indigo), label: wrongOpts[1] },
+          { id: 'd', svg: numberOptionSvg(wrongOpts[2], C.indigo), label: wrongOpts[2] }
         ],
         correctOptionId: 'a',
         hint: `Count the shaded slices over total slices!`,
         explanation: `${shadedSlices} out of ${totalSlices} slices are shaded: ${fractionLabel}!`
       };
+    } else if (model === 'double-half') {
+      const base = pickOne([125, 150, 175, 225, 250, 350, 450]);
+      const isDouble = Math.random() > 0.5;
+      const answer = isDouble ? base * 2 : base;
+      const questionNum = isDouble ? base : base * 2;
+      const promptText = isDouble ? `What is DOUBLE of ${questionNum}?` : `What is HALF of ${questionNum}?`;
+      const signature = `math:9+:d${difficulty}:${isDouble ? 'double' : 'half'}:${questionNum}:${answer}`;
+      const id = `gen-math-9-d${difficulty}-dh-${questionNum}-${uid}`;
+      const wrongNums = generateNumberDistractors(answer, 3, 10);
+
+      return {
+        id, signature, category: 'math', ageGroup, difficulty,
+        questionText: promptText,
+        questionSVG: questionSvg(`
+          <g class="anim-pulse">
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="${isDouble ? '#F0FDF4' : '#FEF3C7'}" stroke="${isDouble ? C.green : C.amber}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="44" font-weight="bold" fill="${isDouble ? C.green : C.amber}" text-anchor="middle" dominant-baseline="central">
+              ${isDouble ? `${questionNum} × 2 = ❓` : `${questionNum} ÷ 2 = ❓`}
+            </text>
+          </g>
+        `, 400, 130),
+        options: [
+          { id: 'a', svg: numberOptionSvg(answer, C.green), label: String(answer) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.green), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.green), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.green), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: isDouble ? `Multiply ${questionNum} by 2!` : `Divide ${questionNum} by 2!`,
+        explanation: isDouble ? `Double of ${questionNum} is ${answer}! ⚡` : `Half of ${questionNum} is ${answer}! ✂️`
+      };
     } else {
-      const starVal = randInt(3, 20);
-      const k = randInt(2, 18);
-      const coeff = pickOne([2, 3, 4]);
+      const starVal = randInt(3, 25);
+      const k = randInt(2, 20);
+      const coeff = pickOne([2, 3, 4, 5]);
       const total = coeff * starVal + k;
       const signature = `math:9+:d${difficulty}:alg:${coeff}s+${k}=${total}:${starVal}`;
       const id = `gen-math-9-d${difficulty}-alg-${coeff}-${starVal}-${k}-${uid}`;
@@ -560,15 +805,15 @@ function generateMathQuestion(ageGroup, difficulty = 1) {
         questionText: `Find the secret value of the star: ${coeff}★ + ${k} = ${total}`,
         questionSVG: questionSvg(`
           <g class="anim-glow">
-            <rect x="40" y="25" width="320" height="85" rx="18" fill="#FEF3C7" stroke="${C.amber}" stroke-width="2"/>
-            <text x="50" y="80" font-size="40" font-weight="bold" fill="${C.amber}">${coeff}⭐ + ${k} = ${total}</text>
+            <rect x="15" y="20" width="370" height="90" rx="18" fill="#FEF3C7" stroke="${C.amber}" stroke-width="2.5"/>
+            <text x="200" y="68" font-size="38" font-weight="bold" fill="${C.amber}" text-anchor="middle" dominant-baseline="central">${coeff}⭐ + ${k} = ${total}</text>
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="20" y="56" font-size="44" font-weight="bold" fill="${C.amber}">${starVal}</text>`), label: String(starVal) },
-          { id: 'b', svg: optionSvg(`<text x="20" y="56" font-size="44" font-weight="bold" fill="${C.amber}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="20" y="56" font-size="44" font-weight="bold" fill="${C.amber}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="20" y="56" font-size="44" font-weight="bold" fill="${C.amber}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(starVal, C.amber), label: String(starVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.amber), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.amber), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.amber), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `First subtract ${k} from ${total}, then divide by ${coeff}!`,
@@ -933,8 +1178,8 @@ function generatePatternsQuestion(ageGroup, difficulty = 1) {
         explanation: 'Following the rhythm points it to the next step!'
       };
     } else {
-      // Growing count pattern: 1, 3, 5, ? or 2, 4, 6, ?
-      const step = pickOne([2, 3, 5, 10]);
+      // Growing count pattern / Skip counting
+      const step = pickOne([2, 3, 4, 5, 10]);
       const start = randInt(1, 15);
       const seq = [start, start + step, start + step * 2, start + step * 3];
       const nextVal = start + step * 4;
@@ -944,20 +1189,13 @@ function generatePatternsQuestion(ageGroup, difficulty = 1) {
 
       return {
         id, signature, category: 'patterns', ageGroup, difficulty,
-        questionText: `Skip count pattern: ${seq.join(', ')}, ?`,
-        questionSVG: questionSvg(`
-          <g class="anim-float">
-            <rect x="25" y="25" width="350" height="85" rx="16" fill="${C.purple}15" stroke="${C.purple}" stroke-width="2"/>
-            <text x="35" y="80" font-size="36" font-weight="bold" fill="${C.purple}">
-              ${seq.join(', ')}, <tspan fill="${C.rose}">?</tspan>
-            </text>
-          </g>
-        `, 400, 130),
+        questionText: `Skip count pattern: What comes next?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, C.purple),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="20" y="56" font-size="42" font-weight="bold" fill="${C.purple}">${nextVal}</text>`), label: String(nextVal) },
-          { id: 'b', svg: optionSvg(`<text x="20" y="56" font-size="42" font-weight="bold" fill="${C.purple}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="20" y="56" font-size="42" font-weight="bold" fill="${C.purple}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="20" y="56" font-size="42" font-weight="bold" fill="${C.purple}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(nextVal, C.purple), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], C.purple), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], C.purple), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], C.purple), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: `Each step adds ${step}!`,
@@ -965,39 +1203,273 @@ function generatePatternsQuestion(ageGroup, difficulty = 1) {
       };
     }
   } else {
-    // 7-8 & 9+: Arithmetic progressions, alternating sequences, double-step
+    // 7-8 & 9+: Rich Multi-Model Sequences (Geometric/Multiplication, Division, Times Tables, Growing Differences, Alternating, Squares, Fibonacci, Arithmetic)
     const color = pickOne(COLOR_NAMES);
-    const step = pickOne([2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 15, 20, 25]);
-    const start = randInt(1, 100);
-    const isDecreasing = Math.random() > 0.7 && start > 40;
-    const signedStep = isDecreasing ? -Math.min(step, 8) : step;
-    const seq = [start, start + signedStep, start + signedStep * 2, start + signedStep * 3];
-    const nextVal = start + signedStep * 4;
-    const signature = `pat:${ageGroup}:d${difficulty}:seq:${start}+${signedStep}:${nextVal}`;
-    const id = `gen-pat-${ageGroup}-d${difficulty}-seq-${start}-${signedStep}-${uid}`;
-    const wrongNums = generateNumberDistractors(nextVal, 3, 0);
+    const model = pickOne([
+      'geometric', 'division', 'mult-table', 'growing-diff', 'alternating-op', 'squares', 'fibonacci', 'arithmetic'
+    ]);
 
-    return {
-      id, signature, category: 'patterns', ageGroup, difficulty,
-      questionText: `What number completes the logic sequence?`,
-      questionSVG: questionSvg(`
-        <g class="anim-float">
-          <rect x="25" y="25" width="350" height="85" rx="16" fill="${color.hex}15" stroke="${color.hex}" stroke-width="2"/>
-          <text x="35" y="80" font-size="36" font-weight="bold" fill="${color.hex}">
-            ${seq.join(', ')}, <tspan fill="${C.rose}">?</tspan>
-          </text>
-        </g>
-      `, 400, 130),
-      options: [
-        { id: 'a', svg: optionSvg(`<text x="20" y="56" font-size="42" font-weight="bold" fill="${color.hex}">${nextVal}</text>`), label: String(nextVal) },
-        { id: 'b', svg: optionSvg(`<text x="20" y="56" font-size="42" font-weight="bold" fill="${color.hex}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-        { id: 'c', svg: optionSvg(`<text x="20" y="56" font-size="42" font-weight="bold" fill="${color.hex}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-        { id: 'd', svg: optionSvg(`<text x="20" y="56" font-size="42" font-weight="bold" fill="${color.hex}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
-      ],
-      correctOptionId: 'a',
-      hint: `Notice how much changes at each step (${signedStep >= 0 ? '+' : ''}${signedStep})!`,
-      explanation: `${seq[seq.length - 1]} ${signedStep >= 0 ? '+' : '-'} ${Math.abs(signedStep)} = ${nextVal}!`
-    };
+    if (model === 'geometric') {
+      // Multiplication / Geometric sequence
+      const mult = pickOne([2, 3, 4, 5, 10]);
+      let start;
+      if (mult === 2) start = pickOne([1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 20, 25]);
+      else if (mult === 3) start = pickOne([1, 2, 3, 4, 5, 6]);
+      else if (mult === 4) start = pickOne([1, 2, 3, 4]);
+      else if (mult === 5) start = pickOne([1, 2, 3, 4, 5]);
+      else start = pickOne([1, 2, 3, 5]);
+
+      const seq = [start, start * mult, start * mult * mult, start * mult * mult * mult];
+      const nextVal = start * mult * mult * mult * mult;
+      const signature = `pat:${ageGroup}:d${difficulty}:geom:${start}x${mult}:${nextVal}`;
+      const id = `gen-pat-${ageGroup}-d${difficulty}-geom-${start}-${mult}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 1);
+
+      return {
+        id, signature, category: 'patterns', ageGroup, difficulty,
+        questionText: `Multiplication sequence (×${mult}): What number comes next?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, color.hex),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, color.hex), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Each step multiplies by ${mult}: ${seq[seq.length - 1]} × ${mult} = ?`,
+        explanation: `Each number is multiplied by ${mult}: ${seq[seq.length - 1]} × ${mult} = ${nextVal}! 🚀`
+      };
+    } else if (model === 'division') {
+      // Division / Halving shrinking sequence
+      const div = pickOne([2, 3, 5, 10]);
+      let endVal;
+      if (div === 2) endVal = pickOne([2, 3, 4, 5, 6, 8, 10]);
+      else if (div === 3) endVal = pickOne([1, 2, 3]);
+      else if (div === 5) endVal = pickOne([1, 2, 4]);
+      else endVal = pickOne([1, 2, 5]);
+
+      const a4 = endVal;
+      const a3 = a4 * div;
+      const a2 = a3 * div;
+      const a1 = a2 * div;
+      const a0 = a1 * div;
+      const seq = [a0, a1, a2, a3];
+      const nextVal = a4;
+      const signature = `pat:${ageGroup}:d${difficulty}:divseq:${a0}/${div}:${nextVal}`;
+      const id = `gen-pat-${ageGroup}-d${difficulty}-divseq-${a0}-${div}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 1);
+
+      return {
+        id, signature, category: 'patterns', ageGroup, difficulty,
+        questionText: `Division pattern (÷${div}): What number completes the sequence?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, color.hex),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, color.hex), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Divide by ${div} at each step: ${seq[seq.length - 1]} ÷ ${div} = ?`,
+        explanation: `Each number is divided by ${div}: ${seq[seq.length - 1]} ÷ ${div} = ${nextVal}! 📉`
+      };
+    } else if (model === 'mult-table') {
+      // Multiplication times table skip counting
+      const table = pickOne([3, 4, 6, 7, 8, 9, 11, 12, 15, 25]);
+      const kStart = randInt(1, 4);
+      const seq = [table * kStart, table * (kStart + 1), table * (kStart + 2), table * (kStart + 3)];
+      const nextVal = table * (kStart + 4);
+      const signature = `pat:${ageGroup}:d${difficulty}:multtbl:${table}x${kStart}:${nextVal}`;
+      const id = `gen-pat-${ageGroup}-d${difficulty}-tbl-${table}-${kStart}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 1);
+
+      return {
+        id, signature, category: 'patterns', ageGroup, difficulty,
+        questionText: `Times Table of ${table}: What comes next in the sequence?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, color.hex),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, color.hex), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `These are multiples of ${table}. Add ${table} to ${seq[seq.length - 1]}!`,
+        explanation: `${seq[seq.length - 1]} + ${table} = ${nextVal} (or ${table} × ${kStart + 4} = ${nextVal})! ⭐`
+      };
+    } else if (model === 'growing-diff') {
+      // Step increases by 1 or 2 each time
+      const diffType = pickOne(['plus1', 'plus2', 'triangular']);
+      let seq = [];
+      let nextVal = 0;
+      let stepExplain = '';
+
+      if (diffType === 'triangular') {
+        seq = [1, 3, 6, 10, 15]; // +2, +3, +4, +5
+        nextVal = 21; // +6
+        stepExplain = 'Adding +2, +3, +4, +5, +6: 15 + 6 = 21';
+      } else if (diffType === 'plus1') {
+        const start = randInt(2, 8);
+        const s1 = randInt(2, 4);
+        seq = [start, start + s1, start + s1 + (s1 + 1), start + s1 + (s1 + 1) + (s1 + 2)];
+        nextVal = seq[3] + (s1 + 3);
+        stepExplain = `The difference grows by 1 (+${s1}, +${s1+1}, +${s1+2}, +${s1+3}): ${seq[3]} + ${s1+3} = ${nextVal}`;
+      } else {
+        const start = randInt(1, 5);
+        seq = [start, start + 2, start + 2 + 4, start + 2 + 4 + 6, start + 2 + 4 + 6 + 8];
+        nextVal = seq[4] + 10;
+        stepExplain = `The difference grows by 2 (+2, +4, +6, +8, +10): ${seq[4]} + 10 = ${nextVal}`;
+      }
+
+      const signature = `pat:${ageGroup}:d${difficulty}:growdiff:${diffType}:${seq[0]}:${nextVal}`;
+      const id = `gen-pat-${ageGroup}-d${difficulty}-growdiff-${diffType}-${seq[0]}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 1);
+
+      return {
+        id, signature, category: 'patterns', ageGroup, difficulty,
+        questionText: `Growing difference pattern: What number comes next?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, color.hex),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, color.hex), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Look at the differences between each pair of numbers!`,
+        explanation: `${stepExplain}! 🧩`
+      };
+    } else if (model === 'alternating-op') {
+      // Alternating 2-step sequence (+a, -b or ×2, +1)
+      const altType = pickOne(['add-sub', 'mult-add', 'add10-sub5']);
+      let seq = [];
+      let nextVal = 0;
+      let explain = '';
+
+      if (altType === 'add-sub') {
+        const start = randInt(3, 15);
+        const add = randInt(5, 8);
+        const sub = randInt(2, 4);
+        seq = [start, start + add, start + add - sub, start + add - sub + add, start + add - sub + add - sub];
+        nextVal = seq[4] + add;
+        explain = `Pattern alternates (+${add}, -${sub}, +${add}, -${sub}, +${add}): ${seq[4]} + ${add} = ${nextVal}`;
+      } else if (altType === 'mult-add') {
+        const start = randInt(2, 4);
+        const v1 = start;
+        const v2 = v1 * 2 + 1;
+        const v3 = v2 * 2 + 1;
+        const v4 = v3 * 2 + 1;
+        seq = [v1, v2, v3, v4];
+        nextVal = v4 * 2 + 1;
+        explain = `Pattern is (×2 + 1): ${v4} × 2 + 1 = ${nextVal}`;
+      } else {
+        const start = randInt(4, 20);
+        seq = [start, start + 10, start + 10 - 5, start + 10 - 5 + 10, start + 10 - 5 + 10 - 5];
+        nextVal = seq[4] + 10;
+        explain = `Pattern alternates (+10, -5): ${seq[4]} + 10 = ${nextVal}`;
+      }
+
+      const signature = `pat:${ageGroup}:d${difficulty}:alt:${altType}:${seq[0]}:${nextVal}`;
+      const id = `gen-pat-${ageGroup}-d${difficulty}-alt-${altType}-${seq[0]}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 1);
+
+      return {
+        id, signature, category: 'patterns', ageGroup, difficulty,
+        questionText: `Alternating operations: What completes the pattern?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, color.hex),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, color.hex), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Follow the alternating rhythm of operations!`,
+        explanation: `${explain}! 🎯`
+      };
+    } else if (model === 'squares') {
+      // Perfect squares series
+      const startRoot = randInt(1, 6);
+      const seq = [
+        startRoot * startRoot,
+        (startRoot + 1) * (startRoot + 1),
+        (startRoot + 2) * (startRoot + 2),
+        (startRoot + 3) * (startRoot + 3)
+      ];
+      const nextRoot = startRoot + 4;
+      const nextVal = nextRoot * nextRoot;
+      const signature = `pat:${ageGroup}:d${difficulty}:sq:${startRoot}:${nextVal}`;
+      const id = `gen-pat-${ageGroup}-d${difficulty}-sq-${startRoot}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 1);
+
+      return {
+        id, signature, category: 'patterns', ageGroup, difficulty,
+        questionText: `Square numbers pattern: What number comes next?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, color.hex),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, color.hex), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `These are square numbers: (${startRoot}², ${startRoot+1}², ${startRoot+2}²...)! Next is ${nextRoot}²!`,
+        explanation: `Perfect square sequence: ${nextRoot}² (${nextRoot} × ${nextRoot}) = ${nextVal}! 🟥`
+      };
+    } else if (model === 'fibonacci') {
+      // Add-previous-two numbers
+      const a = randInt(1, 3);
+      const b = randInt(1, 4);
+      const c = a + b;
+      const d = b + c;
+      const e = c + d;
+      const nextVal = d + e;
+      const seq = [a, b, c, d, e];
+      const signature = `pat:${ageGroup}:d${difficulty}:fib:${a}-${b}:${nextVal}`;
+      const id = `gen-pat-${ageGroup}-d${difficulty}-fib-${a}-${b}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 1);
+
+      return {
+        id, signature, category: 'patterns', ageGroup, difficulty,
+        questionText: `Sum of previous two numbers: What completes the sequence?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, color.hex),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, color.hex), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Add the last two numbers together: ${d} + ${e} = ?`,
+        explanation: `Each number is the sum of the two before it: ${d} + ${e} = ${nextVal}! 🌀`
+      };
+    } else {
+      // Arithmetic progression (constant step)
+      const step = pickOne([2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 15, 20, 25, 50]);
+      const start = randInt(1, 100);
+      const isDecreasing = Math.random() > 0.7 && start > 40;
+      const signedStep = isDecreasing ? -Math.min(step, 8) : step;
+      const seq = [start, start + signedStep, start + signedStep * 2, start + signedStep * 3];
+      const nextVal = start + signedStep * 4;
+      const signature = `pat:${ageGroup}:d${difficulty}:seq:${start}+${signedStep}:${nextVal}`;
+      const id = `gen-pat-${ageGroup}-d${difficulty}-seq-${start}-${signedStep}-${uid}`;
+      const wrongNums = generateNumberDistractors(nextVal, 3, 0);
+
+      return {
+        id, signature, category: 'patterns', ageGroup, difficulty,
+        questionText: `What number completes the logic sequence?`,
+        questionSVG: renderSequenceCardSvg(seq, C.rose, color.hex),
+        options: [
+          { id: 'a', svg: numberOptionSvg(nextVal, color.hex), label: String(nextVal) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], color.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], color.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], color.hex), label: String(wrongNums[2]) }
+        ],
+        correctOptionId: 'a',
+        hint: `Notice how much changes at each step (${signedStep >= 0 ? '+' : ''}${signedStep})!`,
+        explanation: `${seq[seq.length - 1]} ${signedStep >= 0 ? '+' : '-'} ${Math.abs(signedStep)} = ${nextVal}!`
+      };
+    }
   }
 }
 
@@ -1135,10 +1607,10 @@ function generateSpatialQuestion(ageGroup, difficulty = 1) {
           </g>
         `, 400, 130),
         options: [
-          { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${col.hex}">${blockCount}</text>`), label: String(blockCount) },
-          { id: 'b', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${col.hex}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-          { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${col.hex}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-          { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${col.hex}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+          { id: 'a', svg: numberOptionSvg(blockCount, col.hex), label: String(blockCount) },
+          { id: 'b', svg: numberOptionSvg(wrongNums[0], col.hex), label: String(wrongNums[0]) },
+          { id: 'c', svg: numberOptionSvg(wrongNums[1], col.hex), label: String(wrongNums[1]) },
+          { id: 'd', svg: numberOptionSvg(wrongNums[2], col.hex), label: String(wrongNums[2]) }
         ],
         correctOptionId: 'a',
         hint: 'Count the tops of each block!',
@@ -1201,10 +1673,10 @@ function generateSpatialQuestion(ageGroup, difficulty = 1) {
         </g>
       `, 400, 130),
       options: [
-        { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${col.hex}">${blockCount}</text>`), label: String(blockCount) },
-        { id: 'b', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${col.hex}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-        { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${col.hex}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-        { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="44" font-weight="bold" fill="${col.hex}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+        { id: 'a', svg: numberOptionSvg(blockCount, col.hex), label: String(blockCount) },
+        { id: 'b', svg: numberOptionSvg(wrongNums[0], col.hex), label: String(wrongNums[0]) },
+        { id: 'c', svg: numberOptionSvg(wrongNums[1], col.hex), label: String(wrongNums[1]) },
+        { id: 'd', svg: numberOptionSvg(wrongNums[2], col.hex), label: String(wrongNums[2]) }
       ],
       correctOptionId: 'a',
       hint: 'Count the top surfaces of each 3D cube!',
@@ -1464,10 +1936,10 @@ function generateMemoryQuestion(ageGroup, difficulty = 1) {
     questionText: `How many glowing ${targetColor.name} circles can you count?`,
     questionSVG: questionSvg(svgShapes.join(' '), 380, 130),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="26" y="58" font-size="50" font-weight="bold" fill="${targetColor.hex}">${targetCount}</text>`), label: String(targetCount) },
-      { id: 'b', svg: optionSvg(`<text x="26" y="58" font-size="50" font-weight="bold" fill="${targetColor.hex}">${wrongNums[0]}</text>`), label: String(wrongNums[0]) },
-      { id: 'c', svg: optionSvg(`<text x="26" y="58" font-size="50" font-weight="bold" fill="${targetColor.hex}">${wrongNums[1]}</text>`), label: String(wrongNums[1]) },
-      { id: 'd', svg: optionSvg(`<text x="26" y="58" font-size="50" font-weight="bold" fill="${targetColor.hex}">${wrongNums[2]}</text>`), label: String(wrongNums[2]) }
+      { id: 'a', svg: numberOptionSvg(targetCount, targetColor.hex), label: String(targetCount) },
+      { id: 'b', svg: numberOptionSvg(wrongNums[0], targetColor.hex), label: String(wrongNums[0]) },
+      { id: 'c', svg: numberOptionSvg(wrongNums[1], targetColor.hex), label: String(wrongNums[1]) },
+      { id: 'd', svg: numberOptionSvg(wrongNums[2], targetColor.hex), label: String(wrongNums[2]) }
     ],
     correctOptionId: 'a',
     hint: `Focus carefully only on the ${targetColor.name} ones!`,

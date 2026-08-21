@@ -197,6 +197,7 @@ function renderQuestion() {
     clearTimeout(autoAdvanceTimer);
     autoAdvanceTimer = null;
   }
+  window.scrollTo({ top: 0, behavior: 'instant' });
 
   const { category, questions, currentIndex, isReviewMode, levelNumber, difficulty } = AppState.gameSession;
   const currentDifficulty = difficulty || AppState.selectedDifficulty || 1;
@@ -252,19 +253,22 @@ function renderQuestion() {
 
         <!-- Answer Options -->
         <div class="options-grid" id="options-grid">
-          ${q.options.map((opt, idx) => `
-            <div
-              class="option-tile"
-              data-option-id="${opt.id}"
-              data-index="${idx}"
-              tabindex="0"
-              role="button"
-              aria-label="Option ${opt.id.toUpperCase()}: ${escapeHtml(opt.label)}"
-            >
-              <div class="option-visual">${opt.svg}</div>
-              <span class="option-label">${escapeHtml(opt.label)}</span>
-            </div>
-          `).join('')}
+          ${q.options.map((opt, idx) => {
+            const isNumeric = /^-?\d+(\/\d+)?(%|°)?$/.test((opt.label || '').trim());
+            return `
+              <div
+                class="option-tile"
+                data-option-id="${opt.id}"
+                data-index="${idx}"
+                tabindex="0"
+                role="button"
+                aria-label="Option ${opt.id.toUpperCase()}: ${escapeHtml(opt.label)}"
+              >
+                <div class="option-visual">${opt.svg}</div>
+                ${!isNumeric && opt.label ? `<span class="option-label">${escapeHtml(opt.label)}</span>` : ''}
+              </div>
+            `;
+          }).join('')}
         </div>
 
         <!-- Feedback Banner Area (populated on click) -->

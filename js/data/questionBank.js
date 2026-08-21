@@ -41,6 +41,35 @@ function svgWrap(w, h, content) {
 function optionSvg(content) {
   return svgWrap(80, 80, content);
 }
+function numberOptionSvg(val, color = C.purple) {
+  const str = String(val);
+  let fontSize = 42;
+  if (str.length >= 5) fontSize = 22;
+  else if (str.length === 4) fontSize = 26;
+  else if (str.length === 3) fontSize = 32;
+  else if (str.length === 2) fontSize = 38;
+  else fontSize = 44;
+
+  return optionSvg(`<text x="40" y="49" font-size="${fontSize}" font-weight="bold" fill="${color}" text-anchor="middle" dominant-baseline="central">${str}</text>`);
+}
+function renderSequenceCardSvg(seq, nextValColor = C.rose, cardColor = C.purple) {
+  const seqStr = seq.join(', ');
+  let fontSize = 36;
+  if (seqStr.length > 32) fontSize = 19;
+  else if (seqStr.length > 25) fontSize = 22;
+  else if (seqStr.length > 20) fontSize = 26;
+  else if (seqStr.length > 15) fontSize = 30;
+
+  return questionSvg(`
+    <g class="anim-float">
+      <rect x="15" y="20" width="370" height="90" rx="18" fill="${cardColor}15" stroke="${cardColor}" stroke-width="2.5"/>
+      <text x="200" y="68" font-size="${fontSize}" font-weight="bold" fill="${cardColor}" text-anchor="middle" dominant-baseline="central">
+        ${seqStr}, <tspan fill="${nextValColor}">?</tspan>
+      </text>
+    </g>
+  `, 400, 130);
+}
+
 function questionSvg(content, w = 400, h = 140) {
   return svgWrap(w, h, content);
 }
@@ -205,85 +234,57 @@ const patternsQuestions = [
   // ── Ages 7-8 ──
   {
     id: 'pat-7-001', category: 'patterns', ageGroup: '7-8', difficulty: 2,
-    questionText: 'What number comes next: 2, 4, 6, 8, ...?',
-    questionSVG: questionSvg(`
-      <text x="20" y="85" font-size="48" font-weight="bold" fill="${C.indigo}">2</text>
-      <text x="90" y="85" font-size="48" font-weight="bold" fill="${C.indigo}">4</text>
-      <text x="160" y="85" font-size="48" font-weight="bold" fill="${C.indigo}">6</text>
-      <text x="230" y="85" font-size="48" font-weight="bold" fill="${C.indigo}">8</text>
-      <text x="310" y="85" font-size="48" font-weight="bold" fill="${C.gray}">?</text>
-    `),
+    questionText: 'What number comes next in the sequence?',
+    questionSVG: renderSequenceCardSvg([2, 4, 6, 8], C.rose, C.indigo),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="22" y="58" font-size="48" font-weight="bold" fill="${C.indigo}">10</text>`), label: '10' },
-      { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.indigo}">9</text>`), label: '9' },
-      { id: 'c', svg: optionSvg(`<text x="22" y="58" font-size="48" font-weight="bold" fill="${C.indigo}">12</text>`), label: '12' },
-      { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="48" font-weight="bold" fill="${C.indigo}">11</text>`), label: '11' }
+      { id: 'a', svg: numberOptionSvg(10, C.indigo), label: '10' },
+      { id: 'b', svg: numberOptionSvg(9, C.indigo), label: '9' },
+      { id: 'c', svg: numberOptionSvg(12, C.indigo), label: '12' },
+      { id: 'd', svg: numberOptionSvg(11, C.indigo), label: '11' }
     ],
     correctOptionId: 'a',
-    hint: 'Each number goes up by the same amount.',
+    hint: 'Each number goes up by the same amount (+2).',
     explanation: 'Adding 2 each time: 2, 4, 6, 8, 10!'
   },
   {
     id: 'pat-7-002', category: 'patterns', ageGroup: '7-8', difficulty: 3,
-    questionText: 'What comes next: 1, 1, 2, 3, 5, ...?',
-    questionSVG: questionSvg(`
-      <text x="15" y="85" font-size="44" font-weight="bold" fill="${C.purple}">1</text>
-      <text x="75" y="85" font-size="44" font-weight="bold" fill="${C.purple}">1</text>
-      <text x="135" y="85" font-size="44" font-weight="bold" fill="${C.purple}">2</text>
-      <text x="195" y="85" font-size="44" font-weight="bold" fill="${C.purple}">3</text>
-      <text x="255" y="85" font-size="44" font-weight="bold" fill="${C.purple}">5</text>
-      <text x="325" y="85" font-size="44" font-weight="bold" fill="${C.gray}">?</text>
-    `),
+    questionText: 'What number comes next in the Fibonacci pattern?',
+    questionSVG: renderSequenceCardSvg([1, 1, 2, 3, 5], C.rose, C.purple),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.purple}">8</text>`), label: '8' },
-      { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.purple}">6</text>`), label: '6' },
-      { id: 'c', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.purple}">7</text>`), label: '7' },
-      { id: 'd', svg: optionSvg(`<text x="22" y="58" font-size="48" font-weight="bold" fill="${C.purple}">10</text>`), label: '10' }
+      { id: 'a', svg: numberOptionSvg(8, C.purple), label: '8' },
+      { id: 'b', svg: numberOptionSvg(6, C.purple), label: '6' },
+      { id: 'c', svg: numberOptionSvg(7, C.purple), label: '7' },
+      { id: 'd', svg: numberOptionSvg(10, C.purple), label: '10' }
     ],
     correctOptionId: 'a',
-    hint: 'Add the last two numbers together!',
+    hint: 'Add the last two numbers together (3 + 5)!',
     explanation: 'Fibonacci! Each number is the sum of the two before it: 3 + 5 = 8'
   },
 
   // ── Ages 9+ ──
   {
     id: 'pat-9-001', category: 'patterns', ageGroup: '9+', difficulty: 3,
-    questionText: 'What comes next: 3, 6, 12, 24, ...?',
-    questionSVG: questionSvg(`
-      <text x="15" y="85" font-size="44" font-weight="bold" fill="${C.teal}">3</text>
-      <text x="85" y="85" font-size="44" font-weight="bold" fill="${C.teal}">6</text>
-      <text x="155" y="85" font-size="44" font-weight="bold" fill="${C.teal}">12</text>
-      <text x="235" y="85" font-size="44" font-weight="bold" fill="${C.teal}">24</text>
-      <text x="325" y="85" font-size="44" font-weight="bold" fill="${C.gray}">?</text>
-    `),
+    questionText: 'What number comes next in the doubling sequence?',
+    questionSVG: renderSequenceCardSvg([3, 6, 12, 24], C.rose, C.teal),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.teal}">48</text>`), label: '48' },
-      { id: 'b', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.teal}">36</text>`), label: '36' },
-      { id: 'c', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.teal}">30</text>`), label: '30' },
-      { id: 'd', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.teal}">42</text>`), label: '42' }
+      { id: 'a', svg: numberOptionSvg(48, C.teal), label: '48' },
+      { id: 'b', svg: numberOptionSvg(36, C.teal), label: '36' },
+      { id: 'c', svg: numberOptionSvg(30, C.teal), label: '30' },
+      { id: 'd', svg: numberOptionSvg(42, C.teal), label: '42' }
     ],
     correctOptionId: 'a',
-    hint: 'Each number is multiplied by something!',
+    hint: 'Each number is multiplied by 2: 24 × 2 = ?',
     explanation: 'Each number is doubled (×2): 3→6→12→24→48'
   },
   {
     id: 'pat-9-002', category: 'patterns', ageGroup: '9+', difficulty: 3,
-    questionText: 'What comes next: 1, 4, 9, 16, 25, ...?',
-    questionSVG: questionSvg(`
-      <g class="anim-float">
-        <text x="8" y="85" font-size="40" font-weight="bold" fill="${C.rose}">1</text>
-        <text x="68" y="85" font-size="40" font-weight="bold" fill="${C.rose}">4</text>
-        <text x="128" y="85" font-size="40" font-weight="bold" fill="${C.rose}">9</text>
-        <text x="195" y="85" font-size="40" font-weight="bold" fill="${C.rose}">16</text>
-        <text x="268" y="85" font-size="40" font-weight="bold" fill="${C.rose}">25</text>
-        <text x="345" y="85" font-size="40" font-weight="bold" fill="${C.gray}">?</text>
-      </g>
-    `),
+    questionText: 'What number comes next in the square numbers pattern?',
+    questionSVG: renderSequenceCardSvg([1, 4, 9, 16, 25], C.rose, C.rose),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.rose}">36</text>`), label: '36' },
-      { id: 'b', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.rose}">30</text>`), label: '30' },
-      { id: 'c', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.rose}">35</text>`), label: '35' },
-      { id: 'd', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.rose}">49</text>`), label: '49' }
+      { id: 'a', svg: numberOptionSvg(36, C.rose), label: '36' },
+      { id: 'b', svg: numberOptionSvg(30, C.rose), label: '30' },
+      { id: 'c', svg: numberOptionSvg(35, C.rose), label: '35' },
+      { id: 'd', svg: numberOptionSvg(49, C.rose), label: '49' }
     ],
     correctOptionId: 'a',
     hint: 'These are special numbers — try 1×1, 2×2, 3×3...',
@@ -1001,10 +1002,10 @@ const mathQuestions = [
       <text x="305" y="72" font-size="36" font-weight="bold" fill="${C.gray}">?</text>
     `, 360, 110),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.indigo}">4</text>`), label: '4' },
-      { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.indigo}">5</text>`), label: '5' },
-      { id: 'c', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.indigo}">6</text>`), label: '6' },
-      { id: 'd', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.indigo}">3</text>`), label: '3' }
+      { id: 'a', svg: numberOptionSvg(4, C.indigo), label: '4' },
+      { id: 'b', svg: numberOptionSvg(5, C.indigo), label: '5' },
+      { id: 'c', svg: numberOptionSvg(6, C.indigo), label: '6' },
+      { id: 'd', svg: numberOptionSvg(3, C.indigo), label: '3' }
     ],
     correctOptionId: 'b',
     hint: 'Count all the dots together!',
@@ -1019,10 +1020,10 @@ const mathQuestions = [
       <text x="220" y="85" font-size="52" font-weight="bold" fill="${C.purple}">7</text>
     `, 300, 120),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.purple}">6</text>`), label: '6' },
-      { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.purple}">4</text>`), label: '4' },
-      { id: 'c', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.purple}">8</text>`), label: '8' },
-      { id: 'd', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.purple}">3</text>`), label: '3' }
+      { id: 'a', svg: numberOptionSvg(6, C.purple), label: '6' },
+      { id: 'b', svg: numberOptionSvg(4, C.purple), label: '4' },
+      { id: 'c', svg: numberOptionSvg(8, C.purple), label: '8' },
+      { id: 'd', svg: numberOptionSvg(3, C.purple), label: '3' }
     ],
     correctOptionId: 'a',
     hint: 'Count from 5 — what comes after?',
@@ -1034,13 +1035,16 @@ const mathQuestions = [
     id: 'math-7-001', category: 'math', ageGroup: '7-8', difficulty: 2,
     questionText: 'What is 7 × 3?',
     questionSVG: questionSvg(`
-      <text x="50" y="90" font-size="56" font-weight="bold" fill="${C.teal}">7 × 3 = ?</text>
-    `, 350, 120),
+      <g class="anim-float">
+        <rect x="40" y="25" width="320" height="85" rx="16" fill="#EDE9FE" stroke="${C.teal}" stroke-width="2.5"/>
+        <text x="200" y="70" font-size="46" font-weight="bold" fill="${C.teal}" text-anchor="middle" dominant-baseline="central">7 × 3 = ❓</text>
+      </g>
+    `, 400, 130),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.teal}">21</text>`), label: '21' },
-      { id: 'b', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.teal}">24</text>`), label: '24' },
-      { id: 'c', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.teal}">18</text>`), label: '18' },
-      { id: 'd', svg: optionSvg(`<text x="18" y="58" font-size="44" font-weight="bold" fill="${C.teal}">28</text>`), label: '28' }
+      { id: 'a', svg: numberOptionSvg(21, C.teal), label: '21' },
+      { id: 'b', svg: numberOptionSvg(24, C.teal), label: '24' },
+      { id: 'c', svg: numberOptionSvg(18, C.teal), label: '18' },
+      { id: 'd', svg: numberOptionSvg(28, C.teal), label: '28' }
     ],
     correctOptionId: 'a',
     hint: '7 + 7 + 7 = ?',
@@ -1050,13 +1054,16 @@ const mathQuestions = [
     id: 'math-7-002', category: 'math', ageGroup: '7-8', difficulty: 3,
     questionText: 'If you have 15 candies and give away 8, how many are left?',
     questionSVG: questionSvg(`
-      <text x="30" y="85" font-size="48" font-weight="bold" fill="${C.pink}">15 - 8 = ?</text>
-    `, 350, 120),
+      <g class="anim-pulse">
+        <rect x="40" y="25" width="320" height="85" rx="16" fill="#FCE7F3" stroke="${C.pink}" stroke-width="2.5"/>
+        <text x="200" y="70" font-size="46" font-weight="bold" fill="${C.pink}" text-anchor="middle" dominant-baseline="central">15 - 8 = ❓</text>
+      </g>
+    `, 400, 130),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.pink}">7</text>`), label: '7' },
-      { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.pink}">6</text>`), label: '6' },
-      { id: 'c', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.pink}">8</text>`), label: '8' },
-      { id: 'd', svg: optionSvg(`<text x="28" y="58" font-size="48" font-weight="bold" fill="${C.pink}">9</text>`), label: '9' }
+      { id: 'a', svg: numberOptionSvg(7, C.pink), label: '7' },
+      { id: 'b', svg: numberOptionSvg(6, C.pink), label: '6' },
+      { id: 'c', svg: numberOptionSvg(8, C.pink), label: '8' },
+      { id: 'd', svg: numberOptionSvg(9, C.pink), label: '9' }
     ],
     correctOptionId: 'a',
     hint: 'Take away 8 from 15!',
@@ -1068,13 +1075,16 @@ const mathQuestions = [
     id: 'math-9-001', category: 'math', ageGroup: '9+', difficulty: 3,
     questionText: 'What is 12 × 12?',
     questionSVG: questionSvg(`
-      <text x="40" y="85" font-size="52" font-weight="bold" fill="${C.indigo}">12 × 12 = ?</text>
-    `, 380, 120),
+      <g class="anim-glow">
+        <rect x="40" y="25" width="320" height="85" rx="18" fill="#EDE9FE" stroke="${C.indigo}" stroke-width="2.5"/>
+        <text x="200" y="70" font-size="46" font-weight="bold" fill="${C.indigo}" text-anchor="middle" dominant-baseline="central">12 × 12 = ❓</text>
+      </g>
+    `, 400, 130),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="10" y="55" font-size="38" font-weight="bold" fill="${C.indigo}">144</text>`), label: '144' },
-      { id: 'b', svg: optionSvg(`<text x="10" y="55" font-size="38" font-weight="bold" fill="${C.indigo}">124</text>`), label: '124' },
-      { id: 'c', svg: optionSvg(`<text x="10" y="55" font-size="38" font-weight="bold" fill="${C.indigo}">132</text>`), label: '132' },
-      { id: 'd', svg: optionSvg(`<text x="10" y="55" font-size="38" font-weight="bold" fill="${C.indigo}">156</text>`), label: '156' }
+      { id: 'a', svg: numberOptionSvg(144, C.indigo), label: '144' },
+      { id: 'b', svg: numberOptionSvg(124, C.indigo), label: '124' },
+      { id: 'c', svg: numberOptionSvg(132, C.indigo), label: '132' },
+      { id: 'd', svg: numberOptionSvg(156, C.indigo), label: '156' }
     ],
     correctOptionId: 'a',
     hint: '12 × 10 = 120, then add 12 × 2!',
@@ -1084,13 +1094,16 @@ const mathQuestions = [
     id: 'math-9-002', category: 'math', ageGroup: '9+', difficulty: 3,
     questionText: 'Find the missing number in the balance scale: 45 + ? = 100',
     questionSVG: questionSvg(`
-      <text x="30" y="80" font-size="44" font-weight="bold" fill="${C.teal}">45 + ❓ = 100</text>
-    `, 380, 120),
+      <g class="anim-float">
+        <rect x="30" y="25" width="340" height="85" rx="16" fill="#DCFCE7" stroke="${C.teal}" stroke-width="2.5"/>
+        <text x="200" y="70" font-size="42" font-weight="bold" fill="${C.teal}" text-anchor="middle" dominant-baseline="central">45 + ❓ = 100</text>
+      </g>
+    `, 400, 130),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="18" y="56" font-size="42" font-weight="bold" fill="${C.teal}">55</text>`), label: '55' },
-      { id: 'b', svg: optionSvg(`<text x="18" y="56" font-size="42" font-weight="bold" fill="${C.teal}">65</text>`), label: '65' },
-      { id: 'c', svg: optionSvg(`<text x="18" y="56" font-size="42" font-weight="bold" fill="${C.teal}">45</text>`), label: '45' },
-      { id: 'd', svg: optionSvg(`<text x="18" y="56" font-size="42" font-weight="bold" fill="${C.teal}">50</text>`), label: '50' }
+      { id: 'a', svg: numberOptionSvg(55, C.teal), label: '55' },
+      { id: 'b', svg: numberOptionSvg(65, C.teal), label: '65' },
+      { id: 'c', svg: numberOptionSvg(45, C.teal), label: '45' },
+      { id: 'd', svg: numberOptionSvg(50, C.teal), label: '50' }
     ],
     correctOptionId: 'a',
     hint: '100 - 45 = ?',
@@ -1106,10 +1119,10 @@ const mathQuestions = [
       </g>
     `, 400, 130),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.purple}">4</text>`), label: '4' },
-      { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.purple}">3</text>`), label: '3' },
-      { id: 'c', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.purple}">5</text>`), label: '5' },
-      { id: 'd', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.purple}">2</text>`), label: '2' }
+      { id: 'a', svg: numberOptionSvg(4, C.purple), label: '4' },
+      { id: 'b', svg: numberOptionSvg(3, C.purple), label: '3' },
+      { id: 'c', svg: numberOptionSvg(5, C.purple), label: '5' },
+      { id: 'd', svg: numberOptionSvg(2, C.purple), label: '2' }
     ],
     correctOptionId: 'a',
     hint: 'Count all 4 balloons one by one!',
@@ -1151,10 +1164,10 @@ const mathQuestions = [
       </g>
     `, 400, 130),
     options: [
-      { id: 'a', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.green}">8</text>`), label: '8' },
-      { id: 'b', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.green}">6</text>`), label: '6' },
-      { id: 'c', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.green}">7</text>`), label: '7' },
-      { id: 'd', svg: optionSvg(`<text x="28" y="58" font-size="52" font-weight="bold" fill="${C.green}">9</text>`), label: '9' }
+      { id: 'a', svg: numberOptionSvg(8, C.green), label: '8' },
+      { id: 'b', svg: numberOptionSvg(6, C.green), label: '6' },
+      { id: 'c', svg: numberOptionSvg(7, C.green), label: '7' },
+      { id: 'd', svg: numberOptionSvg(9, C.green), label: '9' }
     ],
     correctOptionId: 'a',
     hint: 'Divide 24 by 3!',

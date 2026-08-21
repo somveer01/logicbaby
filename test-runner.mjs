@@ -167,6 +167,66 @@ assert('Child B gets fresh curated questions for Level 1', childBQuestions.lengt
 switchProfile(profileA.id);
 assert('Child A still has full seen question history after switching profiles', getSeenQuestions().length >= 250);
 
+// 9. Verify 3-Digit Number SVG Formatting & Pattern Models
+console.log('\n--- Running 3-Digit Number & New Pattern Series Tests ---');
+
+// Test 50 procedural pattern questions for 7-8 and 9+ to verify pattern diversity and SVG attributes
+const observedPatternModels = new Set();
+for (let i = 0; i < 60; i++) {
+  const q78 = generateProceduralQuestion('patterns', '7-8', 2);
+  const q9 = generateProceduralQuestion('patterns', '9+', 3);
+  
+  for (const q of [q78, q9]) {
+    assert(`Pattern question has valid ID & SVG: ${q.id}`, !!q.id && q.questionSVG.includes('<svg'));
+    
+    // Check all options
+    for (const opt of q.options) {
+      assert(`Option ${opt.id} has valid SVG`, opt.svg.includes('<svg') && opt.svg.includes('viewBox="0 0 80 80"'));
+      // If option is numeric, verify centered coordinates and text-anchor
+      if (/^\d+$/.test(opt.label)) {
+        assert(`Numeric option ${opt.label} uses centered text-anchor`, opt.svg.includes('text-anchor="middle"'));
+        assert(`Numeric option ${opt.label} uses x="40"`, opt.svg.includes('x="40"'));
+        // If 3 digits or more, verify font-size <= 32
+        if (opt.label.length >= 3) {
+          const fsMatch = opt.svg.match(/font-size="(\d+)"/);
+          assert(`3+ digit option ${opt.label} has scaled font size (<= 32px)`, fsMatch && parseInt(fsMatch[1]) <= 32);
+        }
+      }
+    }
+
+    if (q.signature.includes(':geom:')) observedPatternModels.add('geom');
+    if (q.signature.includes(':divseq:')) observedPatternModels.add('divseq');
+    if (q.signature.includes(':multtbl:')) observedPatternModels.add('multtbl');
+    if (q.signature.includes(':growdiff:')) observedPatternModels.add('growdiff');
+    if (q.signature.includes(':alt:')) observedPatternModels.add('alt');
+    if (q.signature.includes(':sq:')) observedPatternModels.add('sq');
+    if (q.signature.includes(':fib:')) observedPatternModels.add('fib');
+    if (q.signature.includes(':seq:')) observedPatternModels.add('seq');
+  }
+}
+
+assert(`Observed diverse pattern sequence models (geom, multtbl, sq, etc.): count=${observedPatternModels.size}`, observedPatternModels.size >= 4);
+
+// Test math models for 7-8 and 9+
+const observedMathModels = new Set();
+for (let i = 0; i < 60; i++) {
+  const q78 = generateProceduralQuestion('math', '7-8', 2);
+  const q9 = generateProceduralQuestion('math', '9+', 3);
+  for (const q of [q78, q9]) {
+    for (const opt of q.options) {
+      if (/^\d+$/.test(opt.label)) {
+        assert(`Math option ${opt.label} uses centered text-anchor="middle"`, opt.svg.includes('text-anchor="middle"'));
+      }
+    }
+    if (q.signature.includes(':wheel:')) observedMathModels.add('wheel');
+    if (q.signature.includes(':facttri:')) observedMathModels.add('facttri');
+    if (q.signature.includes(':double:') || q.signature.includes(':half:')) observedMathModels.add('double-half');
+    if (q.signature.includes(':mult3d:')) observedMathModels.add('mult3d');
+    if (q.signature.includes(':div3d:')) observedMathModels.add('div3d');
+  }
+}
+assert(`Observed diverse math models (wheels, fact triangles, mult3d, etc.): count=${observedMathModels.size}`, observedMathModels.size >= 3);
+
 console.log('\n========================================');
 console.log(`Summary: ${pass} passed, ${fail} failed.`);
 
@@ -175,3 +235,4 @@ if (fail > 0) {
 } else {
   process.exit(0);
 }
+

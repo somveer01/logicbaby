@@ -83,16 +83,18 @@ async function initApp() {
   // Lazy-load the mascot
   renderMascot();
 
-  // If no profile exists, show age selector first
+  // Initialize router — will process current hash
+  initRouter();
+
+  // If no profile exists, create starter profile and show age selector modal
   if (!AppState.currentProfile) {
-    await showAgeSelector();
-  } else {
-    // Initialize router — will process current hash
-    initRouter();
-    // Default to dashboard if no hash
-    if (!window.location.hash || window.location.hash === '#/') {
-      navigateTo('#/dashboard');
-    }
+    AppState.currentProfile = createProfile('Explorer', '5-6', '🦊');
+    showAgeSelector(true);
+  }
+
+  // Default to dashboard if no hash
+  if (!window.location.hash || window.location.hash === '#/') {
+    navigateTo('#/dashboard');
   }
 
   console.log('✅ LogicBaby ready!');
